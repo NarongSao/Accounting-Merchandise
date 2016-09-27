@@ -27,7 +27,7 @@ tabularOpts.columns = [
             if (val != setting.headOffice) {
                 return val;
             }
-        
+
             return '<u class="text-primary">' + val + '</u>';
         }
     },

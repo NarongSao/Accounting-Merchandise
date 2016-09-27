@@ -55,7 +55,7 @@ if (Meteor.isServer) {
 
             if (!_.isString(event.description)) {
                 event.description = EJSON.stringify(event.description);
-            }else{
+            } else {
                 event.description = event.description;
             }
             event.module = event.module;

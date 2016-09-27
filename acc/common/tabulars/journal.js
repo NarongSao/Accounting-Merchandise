@@ -21,8 +21,8 @@ Meteor.isClient && require('../../imports/ui/pages/journal/journal.html');
 
 tabularOpts.name = 'acc.journal';
 tabularOpts.collection = Journal;
-tabularOpts.order= ['2', 'desc'],
-tabularOpts.extraFields = ['currencyId', 'transactionAsset', 'transaction', 'endId', 'fixAssetExpenseId', 'closingId','refId'];
+tabularOpts.order = ['2', 'desc'],
+    tabularOpts.extraFields = ['currencyId', 'transactionAsset', 'transaction', 'endId', 'fixAssetExpenseId', 'closingId', 'refId'];
 tabularOpts.columns = [
     {title: '<i class="fa fa-bars"></i>', tmpl: Meteor.isClient && Template.acc_journalAction},
     {data: "_id", title: "Id"},
@@ -44,9 +44,9 @@ tabularOpts.columns = [
         render: function (val, type, doc) {
             if (val != null) {
                 var currencySymbol = Currency.findOne({_id: doc.currencyId});
-                let symbol="";
-                if(currencySymbol){
-                    symbol=currencySymbol.symbol;
+                let symbol = "";
+                if (currencySymbol) {
+                    symbol = currencySymbol.symbol;
                 }
                 return symbol + numeral(val).format("0,0.00");
             }

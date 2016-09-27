@@ -6,7 +6,7 @@ import {Branch} from '../../imports/api/collections/branch.js';
 
 Meteor.publish('core.branch', function coreBranch(selector = {}, options = {}) {
     this.unblock();
-    
+
     new SimpleSchema({
         selector: {type: Object, blackbox: true},
         options: {type: Object, blackbox: true}
