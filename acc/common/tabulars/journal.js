@@ -52,7 +52,20 @@ tabularOpts.columns = [
             }
         }
     },
-    {data: "currencyId", title: "Currency"}
+    {data: "currencyId", title: "Currency"},
+    {data: "endId", title: "Status",
+        render:function (val,type,doc) {
+            if(doc.endId>0){
+                return "<p class='label label-success'>End Process</p>";
+            }else if(doc.closingId>0){
+                return "<p class='label label-warning'>Currency Closing</p>";
+            }else if(doc.refId!= undefined){
+                return "<p class='label label-info'>Pos Integration</p>";
+            }else if(doc.fixAssetExpenseId){
+                return "<p class='label label-default'>Normal</p>";
+            }
+        }
+    }
 ];
 export const JournalTabular = new Tabular.Table(tabularOpts);
 

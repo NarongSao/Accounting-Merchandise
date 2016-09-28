@@ -7,6 +7,7 @@ import {moment} from  'meteor/momentjs:moment';
 
 // Collection
 import {NetInCome} from '../../../imports/api/collections/netIncome';
+import {Journal} from '../../../imports/api/collections/journal';
 import {CloseChartAccount} from '../../../imports/api/collections/closeChartAccount';
 import {CloseChartAccountPerMonth} from '../../../imports/api/collections/closeChartAccountPerMonth';
 import {ChartAccount} from '../../../imports/api/collections/chartAccount';
@@ -18,7 +19,7 @@ Meteor.methods({
         var dataMain = {};
         var data = [];
         var monthList = [];
-        var valueList=[];
+        var valueList = [];
 
         var selector = {};
         selector.year = param.year;
@@ -31,7 +32,7 @@ Meteor.methods({
             monthList.push(getMonthName(i));
 
             var netIncome = NetInCome.find(selector).fetch();
-            if (netIncome.length >0) {
+            if (netIncome.length > 0) {
                 netIncome.forEach((obj)=> {
                     if (param.currency == "usd") {
                         valueList.push(obj.dollar)
@@ -55,6 +56,92 @@ Meteor.methods({
         dataMain.data = data;
         dataMain.monthList = monthList;
         return dataMain;
+
+    }
+    , chart_dailyIncomeExpense(param){
+        var currentDate = new Date();
+
+        let curMonth = currentDate.getMonth();
+        let curYear = currentDate.getFullYear();
+
+        var dataIncome = Journal.aggregate([{
+            $unwind: "$transaction"
+        }, {
+            $match: {
+                'transaction.accountDoc.accountTypeId': { $in: ['40', '41'] },
+            }
+        },
+            {
+                $project: {
+                    _id: 1,
+                    currencyId: 1,
+                    day: { $dayOfMonth: "$journalDate" },
+                    month: { $month: "$journalDate" },
+                    year: { $year: "$journalDate" },
+                    transaction: {
+                        drcr: 1
+                    },
+                    journalDate: 1,
+
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        day: "$day",
+                        month: "$month",
+                        year: "$year",
+                        currencyId: "$currencyId",
+
+                    },
+                    journalDate: { $last: "$journalDate" },
+                    value: { $sum: '$transaction.drcr' }
+                }
+            },
+            { $sort: { journalDate: -1 } },
+            {
+                $group: {
+                    _id:"$_id.currencyId",
+                    dayList: {
+                        $addToSet: { $dateToString: { format: "%d/%m/%Y", date: "$journalDate" } }
+                    },
+                    value:{
+                        $addToSet: {$multiply: ["$value",-1 ]}
+                    }
+
+                }
+            }
+
+        ]);
+
+
+        var monthList = getDaysInMonth(curMonth, curYear);
+        monthList.forEach(function (obj) {
+            dataIncome.forEach(function (doc) {
+                if (doc._id == "KHR") {
+                    if (doc.dayList.indexOf(moment(obj).format("DD/MM/YYYY")) == -1) {
+                        let index = monthList.indexOf(obj);
+                        doc.dayList.splice(index, 0, moment(obj).format("DD/MM/YYYY"));
+                        doc.value.splice(index, 0, 0);
+                    }
+                }else if (doc._id == "USD") {
+                    if (doc.dayList.indexOf(moment(obj).format("DD/MM/YYYY")) == -1) {
+                        let index = monthList.indexOf(obj);
+                        doc.dayList.splice(index, 0, moment(obj).format("DD/MM/YYYY"));
+                        doc.value.splice(index, 0, 0);
+                    }
+                }else if (doc._id == "THB") {
+                    if (doc.dayList.indexOf(moment(obj).format("DD/MM/YYYY")) == -1) {
+                        let index = monthList.indexOf(obj);
+                        doc.dayList.splice(index, 0, moment(obj).format("DD/MM/YYYY"));
+                        doc.value.splice(index, 0, 0);
+                    }
+                }
+            })
+        })
+
+        console.log(data);
+        return data;
 
     }
     , chart_accountEveryMonth: function (selector) {
@@ -229,4 +316,16 @@ let getMonthName = (number) => {
 
     }
     return month;
+}
+
+
+function getDaysInMonth(month, year) {
+    // Since no month has fewer than 28 days
+    var date = new Date(year, month, 1);
+    var days = [];
+    while (date.getMonth() === month) {
+        days.push(moment(date, "DD/MM/YYYY").toDate());
+        date.setDate(date.getDate() + 1);
+    }
+    return days;
 }
