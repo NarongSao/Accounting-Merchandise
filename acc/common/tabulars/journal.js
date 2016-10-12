@@ -59,8 +59,8 @@ tabularOpts.columns = [
                 return "<p class='label label-success'>End Process</p>";
             }else if(doc.closingId>0){
                 return "<p class='label label-warning'>Currency Closing</p>";
-            }else if(doc.refId!= undefined){
-                return "<p class='label label-info'>Pos Integration</p>";
+            }else if(doc.refFrom!= undefined){
+                return "<p class='label label-info'>"+doc.refFrom+"</p>";
             }else if(doc.fixAssetExpenseId){
                 return "<p class='label label-default'>Normal</p>";
             }
