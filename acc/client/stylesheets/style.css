@@ -54,3 +54,8 @@
     border-radius: 999px;
     padding: 5px 7px;
 }
+
+
+.input-sm {
+    height: 34px;
+}
