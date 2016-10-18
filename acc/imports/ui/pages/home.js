@@ -42,18 +42,20 @@ if (Meteor.isClient) {
     indexTpl.helpers({
         createChartDailyIncomeExpense: function () {
 
-            Meteor.call('chart_dailyIncomeExpense', function (err,obj) {
-                console.log(obj);
-                if (obj != undefined) {
-                    Meteor.defer(function () {
-                        // Create standard Highcharts chart with options:
+            Meteor.call('chart_dailyIncomeExpense', function (err, obj) {
+
+                Meteor.defer(function () {
+                    // Create standard Highcharts chart with options:
+                    if (obj.dataIncome[0] != undefined || obj.dataExpense[0] != undefined) {
+
+
                         Highcharts.chart('dailyIncomeExpenseUSD', {
                             chart: {
                                 type: 'column'
                             },
 
                             title: {
-                                text: 'Daily Income Expense'
+                                text: 'Daily Income Expense '+ obj.dataIncome[0]._id
                             },
 
                             xAxis: {
@@ -93,6 +95,9 @@ if (Meteor.isClient) {
                                 stack: 'daily'
                             }]
                         });
+                    }
+                    if (obj.dataIncome[1] != undefined || obj.dataExpense[1] != undefined) {
+
 
                         Highcharts.chart('dailyIncomeExpenseKHR', {
                             chart: {
@@ -100,7 +105,7 @@ if (Meteor.isClient) {
                             },
 
                             title: {
-                                text: 'Daily Income Expense'
+                                text: 'Daily Income Expense '+ obj.dataIncome[1]._id
                             },
 
                             xAxis: {
@@ -140,6 +145,8 @@ if (Meteor.isClient) {
                                 stack: 'daily'
                             }]
                         })
+                    }
+                    if (obj.dataIncome[2] != undefined || obj.dataExpense[2] != undefined) {
 
                         Highcharts.chart('dailyIncomeExpenseTHB', {
                             chart: {
@@ -147,7 +154,7 @@ if (Meteor.isClient) {
                             },
 
                             title: {
-                                text: 'Daily Income Expense'
+                                text: 'Daily Income Expense '+ obj.dataIncome[2]._id
                             },
 
                             xAxis: {
@@ -187,10 +194,11 @@ if (Meteor.isClient) {
                                 stack: 'daily'
                             }]
                         })
-                    })
-                }
-            })
+                    }
+                })
 
+
+            })
         }
 
     })

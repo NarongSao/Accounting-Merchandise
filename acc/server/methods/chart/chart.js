@@ -63,14 +63,30 @@ Meteor.methods({
 
         var currentDate = new Date();
 
-        let curMonth = currentDate.getMonth() - 1;
+        let curMonth = currentDate.getMonth();
         let curYear = currentDate.getFullYear();
 
-        var dataIncome = Journal.aggregate([{
+        let month = curMonth + 1;
+        let startDate = moment('01-' + month + '-' + curYear, "DD/MM/YYYY").toDate();
+
+
+        let dataIncome= [
+            {_id: 'USD', dayList: [], value: []},
+            {_id: 'KHR', dayList: [], value: []},
+            {_id: 'THB', dayList: [], value: []}]
+
+        let dataExpense= [
+            {_id: 'USD', dayList: [], value: []},
+            {_id: 'KHR', dayList: [], value: []},
+            {_id: 'THB', dayList: [], value: []}]
+
+
+        var dataIncomeOrg = Journal.aggregate([{
             $unwind: "$transaction"
         }, {
             $match: {
                 'transaction.accountDoc.accountTypeId': {$in: ['40', '41']},
+                journalDate: {$gte: startDate}
             }
         },
             {
@@ -116,6 +132,17 @@ Meteor.methods({
 
         ]);
 
+
+        dataIncomeOrg.forEach(function (obj) {
+            for(var i=0;i<dataIncome.length;i++){
+                if (dataIncome[i]._id === obj._id) {
+                    dataIncome[i].dayList = obj.dayList;
+                    dataIncome[i].value = obj.value;
+                    break;
+                }
+            }
+        })
+
         var dayList = getDaysInMonth(curMonth, curYear);
         dayList.forEach(function (obj) {
             dataIncome.forEach(function (doc) {
@@ -142,11 +169,12 @@ Meteor.methods({
         })
 
 
-        var dataExpense = Journal.aggregate([{
+        var dataExpenseOrg = Journal.aggregate([{
             $unwind: "$transaction"
         }, {
             $match: {
                 'transaction.accountDoc.accountTypeId': {$in: ['50', '51']},
+                journalDate: {$gte: startDate}
             }
         },
             {
@@ -191,6 +219,17 @@ Meteor.methods({
             }
 
         ]);
+
+        dataExpenseOrg.forEach(function (obj) {
+            for(var i=0;i<dataExpense.length;i++){
+                if (dataExpense[i]._id === obj._id) {
+                    dataExpense[i].dayList = obj.dayList;
+                    dataExpense[i].value = obj.value;
+                    break;
+                }
+            }
+        })
+
 
         dayList.forEach(function (obj) {
             dataExpense.forEach(function (doc) {
@@ -303,7 +342,9 @@ Meteor.methods({
         dataMain.datasets = data;
         return dataMain;
     }
-    , chart_companySnapshot: function (selector) {
+    ,
+
+    chart_companySnapshot: function (selector) {
 
         let thisSelector = {};
         let valueAccountListIncome = [];
@@ -318,9 +359,10 @@ Meteor.methods({
 
 
         thisSelector.accountTypeId = {$in: ['40', '41', '50', '51']}
-        thisSelector.year = '2016';
-        thisSelector.month = '06';
-        thisSelector.currencyId = 'USD';
+        thisSelector.year = selector.year;
+        // thisSelector.month = selector.year;
+        thisSelector.currencyId = selector.currencyId;
+        thisSelector.month=selector.month;
 
         let amountList = CloseChartAccountPerMonth.find(thisSelector).fetch();
 
