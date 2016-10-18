@@ -7,3 +7,4 @@ import {CloseChartAccountPerMonth} from '../../imports/api/collections/closeChar
 
 
 DateEndOfProcess.cacheTimestamp();
+DateEndOfProcess._ensureIndex({month: 1,branchId:1}, {unique: 1});

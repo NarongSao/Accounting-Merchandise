@@ -16,8 +16,11 @@ DateEndOfProcess.before.insert(function (userId, doc) {
     var date = moment(doc.closeDate, "DD/MM/YYYY").format("YYMM");
     var prefix = doc.branchId + "-" + date;
     doc._id = idGenerator.genWithPrefix(DateEndOfProcess, prefix, 6);
+    doc.month= moment(doc.closeDate, "DD/MM/YYYY").format("MM");
 
+});
 
+DateEndOfProcess.after.insert(function (userId, doc) {
     //Close Chart Account
 
 
@@ -248,8 +251,7 @@ DateEndOfProcess.before.insert(function (userId, doc) {
 
     }
 
-
-});
+})
 
 CloseChartAccount.before.insert(function (userId, doc) {
 
