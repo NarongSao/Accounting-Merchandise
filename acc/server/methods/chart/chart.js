@@ -59,25 +59,27 @@ Meteor.methods({
 
     }
     , chart_dailyIncomeExpense(param){
+        let data = {};
+
         var currentDate = new Date();
 
-        let curMonth = currentDate.getMonth();
+        let curMonth = currentDate.getMonth() - 1;
         let curYear = currentDate.getFullYear();
 
         var dataIncome = Journal.aggregate([{
             $unwind: "$transaction"
         }, {
             $match: {
-                'transaction.accountDoc.accountTypeId': { $in: ['40', '41'] },
+                'transaction.accountDoc.accountTypeId': {$in: ['40', '41']},
             }
         },
             {
                 $project: {
                     _id: 1,
                     currencyId: 1,
-                    day: { $dayOfMonth: "$journalDate" },
-                    month: { $month: "$journalDate" },
-                    year: { $year: "$journalDate" },
+                    day: {$dayOfMonth: "$journalDate"},
+                    month: {$month: "$journalDate"},
+                    year: {$year: "$journalDate"},
                     transaction: {
                         drcr: 1
                     },
@@ -94,19 +96,19 @@ Meteor.methods({
                         currencyId: "$currencyId",
 
                     },
-                    journalDate: { $last: "$journalDate" },
-                    value: { $sum: '$transaction.drcr' }
+                    journalDate: {$last: "$journalDate"},
+                    value: {$sum: '$transaction.drcr'}
                 }
             },
-            { $sort: { journalDate: -1 } },
+            {$sort: {journalDate: -1}},
             {
                 $group: {
-                    _id:"$_id.currencyId",
+                    _id: "$_id.currencyId",
                     dayList: {
-                        $addToSet: { $dateToString: { format: "%d/%m/%Y", date: "$journalDate" } }
+                        $addToSet: {$dateToString: {format: "%d/%m/%Y", date: "$journalDate"}}
                     },
-                    value:{
-                        $addToSet: {$multiply: ["$value",-1 ]}
+                    value: {
+                        $addToSet: {$multiply: ["$value", -1]}
                     }
 
                 }
@@ -114,25 +116,24 @@ Meteor.methods({
 
         ]);
 
-
-        var monthList = getDaysInMonth(curMonth, curYear);
-        monthList.forEach(function (obj) {
+        var dayList = getDaysInMonth(curMonth, curYear);
+        dayList.forEach(function (obj) {
             dataIncome.forEach(function (doc) {
                 if (doc._id == "KHR") {
                     if (doc.dayList.indexOf(moment(obj).format("DD/MM/YYYY")) == -1) {
-                        let index = monthList.indexOf(obj);
+                        let index = dayList.indexOf(obj);
                         doc.dayList.splice(index, 0, moment(obj).format("DD/MM/YYYY"));
                         doc.value.splice(index, 0, 0);
                     }
-                }else if (doc._id == "USD") {
+                } else if (doc._id == "USD") {
                     if (doc.dayList.indexOf(moment(obj).format("DD/MM/YYYY")) == -1) {
-                        let index = monthList.indexOf(obj);
+                        let index = dayList.indexOf(obj);
                         doc.dayList.splice(index, 0, moment(obj).format("DD/MM/YYYY"));
                         doc.value.splice(index, 0, 0);
                     }
-                }else if (doc._id == "THB") {
+                } else if (doc._id == "THB") {
                     if (doc.dayList.indexOf(moment(obj).format("DD/MM/YYYY")) == -1) {
-                        let index = monthList.indexOf(obj);
+                        let index = dayList.indexOf(obj);
                         doc.dayList.splice(index, 0, moment(obj).format("DD/MM/YYYY"));
                         doc.value.splice(index, 0, 0);
                     }
@@ -140,7 +141,85 @@ Meteor.methods({
             })
         })
 
-        console.log(data);
+
+        var dataExpense = Journal.aggregate([{
+            $unwind: "$transaction"
+        }, {
+            $match: {
+                'transaction.accountDoc.accountTypeId': {$in: ['50', '51']},
+            }
+        },
+            {
+                $project: {
+                    _id: 1,
+                    currencyId: 1,
+                    day: {$dayOfMonth: "$journalDate"},
+                    month: {$month: "$journalDate"},
+                    year: {$year: "$journalDate"},
+                    transaction: {
+                        drcr: 1
+                    },
+                    journalDate: 1,
+
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        day: "$day",
+                        month: "$month",
+                        year: "$year",
+                        currencyId: "$currencyId",
+
+                    },
+                    journalDate: {$last: "$journalDate"},
+                    value: {$sum: '$transaction.drcr'}
+                }
+            },
+            {$sort: {journalDate: -1}},
+            {
+                $group: {
+                    _id: "$_id.currencyId",
+                    dayList: {
+                        $addToSet: {$dateToString: {format: "%d/%m/%Y", date: "$journalDate"}}
+                    },
+                    value: {
+                        $addToSet: "$value"
+                    }
+
+                }
+            }
+
+        ]);
+
+        dayList.forEach(function (obj) {
+            dataExpense.forEach(function (doc) {
+                if (doc._id == "KHR") {
+                    if (doc.dayList.indexOf(moment(obj).format("DD/MM/YYYY")) == -1) {
+                        let index = dayList.indexOf(obj);
+                        doc.dayList.splice(index, 0, moment(obj).format("DD/MM/YYYY"));
+                        doc.value.splice(index, 0, 0);
+                    }
+                } else if (doc._id == "USD") {
+                    if (doc.dayList.indexOf(moment(obj).format("DD/MM/YYYY")) == -1) {
+                        let index = dayList.indexOf(obj);
+                        doc.dayList.splice(index, 0, moment(obj).format("DD/MM/YYYY"));
+                        doc.value.splice(index, 0, 0);
+                    }
+                } else if (doc._id == "THB") {
+                    if (doc.dayList.indexOf(moment(obj).format("DD/MM/YYYY")) == -1) {
+                        let index = dayList.indexOf(obj);
+                        doc.dayList.splice(index, 0, moment(obj).format("DD/MM/YYYY"));
+                        doc.value.splice(index, 0, 0);
+                    }
+                }
+            })
+        })
+
+
+        data.dataIncome = dataIncome;
+        data.dataExpense = dataExpense;
+
         return data;
 
     }
