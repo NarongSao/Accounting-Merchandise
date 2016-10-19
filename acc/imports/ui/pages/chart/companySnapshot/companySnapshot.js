@@ -85,7 +85,9 @@ indexTpl.events({
             let curMonth=(new Date().getMonth()) + 1;
             let monthList=[];
             for(i=curMonth;i>curMonth-3;i--){
-                monthList.push(s.pad(i,2,"0")+"");
+                if(i>0){
+                    monthList.push(s.pad(i,2,"0")+"");
+                }
             }
 
             stateSelectorChart.set('month', monthList);
