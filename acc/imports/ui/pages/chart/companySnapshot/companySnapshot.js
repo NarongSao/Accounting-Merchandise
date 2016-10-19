@@ -77,7 +77,6 @@ indexTpl.events({
         stateSelectorChart.set('yearSelect', $("#yearpicker").val());
         getDataForChart();
     }, 'change #monthpicker': function (e, t) {
-        debugger;
         if ($(e.currentTarget).val() == "This Month") {
             stateSelectorChart.set('month', [s.pad(new Date().getMonth() + 1,2,"0")]);
         } else if ($(e.currentTarget).val() == "Last Month") {
@@ -162,7 +161,6 @@ if (Meteor.isClient) {
         },
         createChartExpense: function () {
             // Gather data:
-            debugger;
             let obj = Session.get("objCompanySnapshot");
             // Use Meteor.defer() to craete chart after DOM is ready:
             if (obj != undefined) {
