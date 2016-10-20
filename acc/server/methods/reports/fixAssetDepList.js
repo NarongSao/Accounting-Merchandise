@@ -120,7 +120,7 @@ Meteor.methods({
                     })
                     var currency = getCurrenySymbol(obj.currencyId);
                     if (accountShow != obj.account && i > 1) {
-                        content += "<tr><td colspan='4' style='border-bottom: none' align='center'>Total</td><td>" + numeral(totalAmount).format('0,0.00') + currency + "</td><td colspan='2'></td><td>" + numeral(totalDepExp).format('0,0.00') + currency + "</td><td>" + numeral(totalCumDeprec).format('0,0.00') + currency + "</td><td>" + numeral(totalNetBookValue).format('0,0.00') + currency + "</td></tr>";
+                        content += "<tr><td colspan='4' style='border-bottom: none' align='center'>Total</td><td>" + numeral(totalAmount).format('0,0.00') + mainCurrency + "</td><td colspan='2'></td><td>" + numeral(totalDepExp).format('0,0.00') + mainCurrency + "</td><td>" + numeral(totalCumDeprec).format('0,0.00') + mainCurrency + "</td><td>" + numeral(totalNetBookValue).format('0,0.00') + mainCurrency + "</td></tr>";
                     }
 
                     if (accountShow != obj.account) {
