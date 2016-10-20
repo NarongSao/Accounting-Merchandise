@@ -144,9 +144,9 @@
                         <i class="fa fa-angle-right"></i> <span>{{_ "core.sidebarMenu.exchange"}}</span>
                     </a>
                 </li>
-                <li class="{{isActiveRoute name='acc.currencyClosingReport'}}">
-                    <a href="{{pathFor 'acc.currencyClosingReport'}}">
-                        <i class="fa fa-angle-right"></i> <span>{{_ "acc.sidebarMenu.currencyClosingReport"}}</span>
+                <li class="{{isActiveRoute name='acc.exchangeNBC'}}">
+                    <a href="{{pathFor 'acc.exchangeNBC'}}">
+                        <i class="fa fa-angle-right"></i> <span>{{_ "acc.sidebarMenu.exchangeNBC"}}</span>
                     </a>
                 </li>
                 <li class="{{isActiveRoute name='acc.fixAssetExpense'}}">
@@ -154,16 +154,18 @@
                         <i class="fa fa-angle-right"></i> <span>{{_ "acc.sidebarMenu.fixAssetExpense"}}</span>
                     </a>
                 </li>
+                <li class="{{isActiveRoute name='acc.currencyClosingReport'}}">
+                    <a href="{{pathFor 'acc.currencyClosingReport'}}">
+                        <i class="fa fa-angle-right"></i> <span>{{_ "acc.sidebarMenu.currencyClosingReport"}}</span>
+                    </a>
+                </li>
+
                 <li class="{{isActiveRoute name='acc.endOfProcess'}}">
                     <a href="{{pathFor 'acc.endOfProcess'}}">
                         <i class="fa fa-angle-right"></i> <span>{{_ "acc.sidebarMenu.endOfProcess"}}</span>
                     </a>
                 </li>
-                <li class="{{isActiveRoute name='acc.exchangeNBC'}}">
-                    <a href="{{pathFor 'acc.exchangeNBC'}}">
-                        <i class="fa fa-angle-right"></i> <span>{{_ "acc.sidebarMenu.exchangeNBC"}}</span>
-                    </a>
-                </li>
+
             </ul>
         </li>
     {{/if}}
