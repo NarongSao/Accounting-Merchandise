@@ -106,6 +106,17 @@
                         <i class="fa fa-angle-right"></i> <span>{{_ "acc.sidebarMenu.balanceSheetReport"}}</span>
                     </a>
                 </li>
+                <li class="{{isActiveRoute name='acc.cashReport'}}">
+                    <a href="{{pathFor 'acc.cashReport'}}">
+                        <i class="fa fa-angle-right"></i> <span>{{_ "acc.sidebarMenu.cashReport"}}</span>
+                    </a>
+                </li>
+
+                <li class="{{isActiveRoute name='acc.profitLostComparationReport'}}">
+                    <a href="{{pathFor 'acc.profitLostComparationReport'}}">
+                        <i class="fa fa-angle-right"></i> <span>{{_ "acc.sidebarMenu.profitLostComparationReport"}}</span>
+                    </a>
+                </li>
 
             </ul>
         </li>
@@ -187,6 +198,12 @@
                 <li class="{{isActiveRoute name='acc.mapClosing'}}">
                     <a href="{{pathFor 'acc.mapClosing'}}">
                         <i class="fa fa-angle-right"></i> <span>{{_ "acc.sidebarMenu.mapClosing"}}</span>
+                    </a>
+                </li>
+
+                <li class="{{isActiveRoute name='acc.mapUserAndAccount'}}">
+                    <a href="{{pathFor 'acc.mapUserAndAccount'}}">
+                        <i class="fa fa-angle-right"></i> <span>{{_ "acc.sidebarMenu.mapUserAndAccount"}}</span>
                     </a>
                 </li>
 
