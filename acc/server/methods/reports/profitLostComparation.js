@@ -59,7 +59,9 @@ Meteor.methods({
                 };
             }
 
-
+            console.log(startMonth);
+            console.log(endMonth);
+            console.log(selector);
             if (self.currencyId != "All") {
                 selector.currencyId = self.currencyId;
             }
