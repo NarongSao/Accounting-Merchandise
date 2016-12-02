@@ -645,12 +645,13 @@ AutoForm.hooks({
                     let transactionData = journalDetailPaymentReceiveCollection.find().fetch();
                     var total = 0;
                     var transactionList = [];
+
                     transactionData.forEach(function (obj) {
                         total += obj.amount;
-                        transactionList.push({account: obj.account, dr: obj.amount, cr: 0, drcr: obj.amount})
+                        transactionList.push({account: obj.account, dr: 0, cr: obj.amount, drcr: -obj.amount})
                     });
 
-                    transactionList.push({account: paymentMethod, dr: 0, cr: total, drcr: -total})
+                    transactionList.unshift({account: paymentMethod, dr: total, cr: 0, drcr: total})
 
                     doc.transaction = transactionList;
                     let transactionAssetList = [];
