@@ -51,9 +51,10 @@ reportTpl.events({
         Meteor.call('print', true);
     },
     'click .remove': function (e, t) {
+        debugger;
         var id = this._id;
         let selector = {};
-        selector.branchId = Session.set("currentBranch");
+        selector.branchId = Session.get("currentBranch");
         var lastEnd = Closing.findOne(selector, {
             sort: {
                 dateTo: -1

@@ -13,7 +13,7 @@ let Rates = new SimpleSchema({
             return TAPi18n.__('core.exchange.khrLbl');
         },
         decimal: true,
-        min: 0.1,
+        min: 0.00000001,
         autoform: {
             type: 'inputmask',
             inputmaskOptions: function () {
@@ -27,7 +27,7 @@ let Rates = new SimpleSchema({
             return TAPi18n.__('core.exchange.usdLbl');
         },
         decimal: true,
-        min: 0.1,
+        min: 0.000000001,
         autoform: {
             type: 'inputmask',
             inputmaskOptions: function () {
@@ -41,7 +41,7 @@ let Rates = new SimpleSchema({
             return TAPi18n.__('core.exchange.thbLbl');
         },
         decimal: true,
-        min: 0.1,
+        min: 0.0000000001,
         autoform: {
             type: 'inputmask',
             inputmaskOptions: function () {
