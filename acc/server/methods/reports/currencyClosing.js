@@ -494,7 +494,7 @@ Meteor.methods({
     closingRemove: function (id) {
         Journal.remove({closingId: id});
         Closing.remove(id);
-        FixAssetExpense.update({month: doc.month, year: doc.year}, {$set: {closingId: ""}});
+        FixAssetExpense.update({closing: id}, {$set: {closingId: ""}});
 
     }
 });
