@@ -14,6 +14,7 @@ import {MapClosing} from '../../../imports/api/collections/mapCLosing';
 import {ChartAccount} from '../../../imports/api/collections/chartAccount';
 import {AccountType} from '../../../imports/api/collections/accountType';
 import {Journal} from '../../../imports/api/collections/journal';
+import {FixAssetExpense} from '../../../imports/api/collections/fixAssetExpense';
 
 Meteor.methods({
     acc_currencyClosingReport: function (params, branchId) {
@@ -188,8 +189,8 @@ Meteor.methods({
                     selectorClose.dateFrom = fDate;
                     selectorClose.dateTo = moment(date[1], "DD/MM/YYYY").toDate();
                     selectorClose.branchId = self.branchId;
-                    selectorClose.month=moment(date[1],"MM");
-                    selectorClose.year=moment(date[1],"YYYY");
+                    selectorClose.month = moment(date[1], "MM");
+                    selectorClose.year = moment(date[1], "YYYY");
 
                     var closingId = Closing.insert(selectorClose);
 
@@ -477,7 +478,7 @@ Meteor.methods({
                     }
                 }
             } catch (err) {
-                Meteor.call('closingRemove',closingId);
+                Meteor.call('closingRemove', closingId);
             }
             GenerateAndEntry.set(false);
             return data;
@@ -493,5 +494,7 @@ Meteor.methods({
     closingRemove: function (id) {
         Journal.remove({closingId: id});
         Closing.remove(id);
+        FixAssetExpense.update({month: doc.month, year: doc.year}, {$set: {closingId: ""}});
+
     }
 });
