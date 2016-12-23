@@ -85,7 +85,7 @@ Tracker.autorun(function () {
         var dobSelect = Session.get('dobSelect');
         var startYear = moment(dobSelect).year();
         var startDate = moment('01/01/' + startYear).toDate();
-        Meteor.call('getVoucherId', currentCurrency, startDate, function (err, result) {
+        Meteor.call('acc_getVoucherId', currentCurrency, startDate, Session.get("currentBranch"), function (err, result) {
             if (result != undefined) {
                 Session.set('lastVoucherId', parseInt((result.voucherId).substr(8, 13)) + 1);
             } else {
