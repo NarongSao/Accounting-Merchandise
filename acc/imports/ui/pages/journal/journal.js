@@ -638,9 +638,18 @@ AutoForm.hooks({
         onSuccess: function (formType, result) {
             let curDate = Session.get('dobSelect');
             Session.set('dobSelect', undefined);
+            if (Session.get('saveNew')) {
+                Meteor.setTimeout(function () {
+                    $("#currencyId").val(Session.get('currencyId')).trigger("change");
+                    // $('#currencyId').select2('val', Session.get('currencyId'));
+                    Session.set('dobSelect', curDate);
+                    $("#journalDate").val(curDate).trigger("change");
 
-            alertify.journal().close();
-
+                }, 100);
+                Session.set('saveNew', false);
+            } else {
+                alertify.journal().close();
+            }
             stateFixAsset.set('isFixAsset', false);
             // displaySuccess();
             alertify.success("Success");
@@ -696,8 +705,18 @@ AutoForm.hooks({
         onSuccess: function (formType, result) {
             let curDate = Session.get('dobSelect');
             Session.set('dobSelect', undefined);
+            if (Session.get('saveNew')) {
+                Meteor.setTimeout(function () {
+                    $("#currencyId").val(Session.get('currencyId')).trigger("change");
+                    // $('#currencyId').select2('val', Session.get('currencyId'));
+                    Session.set('dobSelect', curDate);
+                    $("#journalDate").val(curDate).trigger("change");
 
-            alertify.journal().close();
+                }, 100);
+                Session.set('saveNew', false);
+            } else {
+                alertify.journal().close();
+            }
             stateFixAsset.set('isFixAsset', false);
             // displaySuccess();
             alertify.success("Success");
@@ -897,6 +916,13 @@ insertPaymentTpl.helpers({
     }
 });
 
+insertPaymentTpl.events({
+
+    'click .save-new': function (e, t) {
+        Session.set('saveNew', true);
+    }
+})
+
 insertReceiveTpl.helpers({
     total(){
         let amount = 0;
@@ -927,6 +953,13 @@ insertReceiveTpl.helpers({
         return journalDetailPaymentReceiveCollection;
     }
 });
+
+insertReceiveTpl.events({
+
+    'click .save-new': function (e, t) {
+        Session.set('saveNew', true);
+    }
+})
 
 
 insertPaymentTpl.onDestroyed(function () {
