@@ -143,13 +143,13 @@ ReceiveItems.after.insert(function (userId, doc) {
             let data = doc;
             data.type = type;
             data.transaction = transaction;
+            data.journalDate = data.receiveItemDate;
 
             let vendorDoc = Vendors.findOne({_id: doc.vendorId});
             if (vendorDoc) {
                 data.name = vendorDoc.name;
+                data.des = data.des == "" || data.des == null ? ('ទទួលទំនិញពីក្រុមហ៊ុនៈ ' + data.name) : data.des;
             }
-
-            console.log(data);
             Meteor.call('insertAccountJournal', data);
         }
         //End Account Integration
@@ -166,7 +166,6 @@ ReceiveItems.after.update(function (userId, doc, fieldNames, modifier, options) 
         let type = '';
         let totalLostAmount = 0;
         let total = 0;
-        console.log(doc);
         doc.items.forEach(function (item) {
             total += item.qty * item.price;
             totalLostAmount += item.lostQty * item.price;
@@ -266,13 +265,13 @@ ReceiveItems.after.update(function (userId, doc, fieldNames, modifier, options) 
             let data = doc;
             data.type = type;
             data.transaction = transaction;
-
+            data.journalDate = data.receiveItemDate;
             let vendorDoc = Vendors.findOne({_id: doc.vendorId});
             if (vendorDoc) {
                 data.name = vendorDoc.name;
+                data.des = data.des == "" || data.des == null ? ('ទទួលទំនិញពីក្រុមហ៊ុនៈ ' + data.name) : data.des;
             }
 
-            console.log(data);
             Meteor.call('updateAccountJournal', data);
         }
         //End Account Integration
@@ -287,15 +286,39 @@ ReceiveItems.after.remove(function (userId, doc) {
         if (doc.type == 'PrepaidOrder') {
             type = 'PrepaidOrder-RI';
             increasePrepaidOrder(doc);
+            let prepaidOrder = PrepaidOrders.findOne(doc.prepaidOrderId);
+            if (prepaidOrder.sumRemainQty == 0) {
+                PrepaidOrders.direct.update(prepaidOrder._id, {$set: {status: 'closed'}});
+            } else {
+                PrepaidOrders.direct.update(prepaidOrder._id, {$set: {status: 'active'}});
+            }
         } else if (doc.type == 'LendingStock') {
             type = 'LendingStock-RI';
             increaseLendingStock(doc);
+            let lendingStock = LendingStocks.findOne(doc.lendingStockId);
+            if (lendingStock.sumRemainQty == 0) {
+                LendingStocks.direct.update(lendingStock._id, {$set: {status: 'closed'}});
+            } else {
+                LendingStocks.direct.update(lendingStock._id, {$set: {status: 'active'}});
+            }
         } else if (doc.type == 'ExchangeGratis') {
             type = 'ExchangeGratis-RI';
             increaseExchangeGratis(doc);
+            let exchangeGratis = ExchangeGratis.findOne(doc.exchangeGratisId);
+            if (exchangeGratis.sumRemainQty == 0) {
+                ExchangeGratis.direct.update(exchangeGratis._id, {$set: {status: 'closed'}});
+            } else {
+                ExchangeGratis.direct.update(exchangeGratis._id, {$set: {status: 'active'}});
+            }
         } else if (doc.type == 'CompanyExchangeRingPull') {
             type = 'RingPull-RI';
             increaseCompanyExchangeRingPull(doc);
+            let companyExchangeRingPull = CompanyExchangeRingPulls.findOne(doc.companyExchangeRingPullId);
+            if (companyExchangeRingPull.sumRemainQty == 0) {
+                CompanyExchangeRingPulls.direct.update(companyExchangeRingPull._id, {$set: {status: 'closed'}});
+            } else {
+                CompanyExchangeRingPulls.direct.update(companyExchangeRingPull._id, {$set: {status: 'active'}});
+            }
 
         } else {
             throw Meteor.Error('Require Receive Item type');
