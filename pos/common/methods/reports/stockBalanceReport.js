@@ -33,25 +33,25 @@ export const stockBalanceReport = new ValidatedMethod({
                 data.title.date = moment(asOfDate).format('YYYY-MMM-DD');
                 selector.createdAt = {$lte: asOfDate};
             }
-            if(params.branch){
-                selector.branchId = {$in: params.branch.split(',') };
+            if (params.branch) {
+                selector.branchId = {$in: params.branch.split(',')};
             }
-            if(params.items) {
+            if (params.items) {
                 selector.itemId = {
                     $in: params.items.split(',')
                 }
             }
-            if(params.location) {
+            if (params.location) {
                 selector.stockLocationId = {
                     $in: params.location.split(',')
                 }
             }
             //check if user has right to view multi branches
             let user = Meteor.users.findOne({_id: Meteor.userId()});
-            for(let i =0 ; i < selector.branchId.$in.length; i++){
-              if(!_.includes(user.rolesBranch, selector.branchId.$in[i])) {
-                  _.pull(selector.branchId.$in, selector.branchId.$in[i]);
-              }
+            for (let i = 0; i < selector.branchId.$in.length; i++) {
+                if (!_.includes(user.rolesBranch, selector.branchId.$in[i])) {
+                    _.pull(selector.branchId.$in, selector.branchId.$in[i]);
+                }
             }
             if (params.filter && params.filter != '') {
                 let filters = params.filter.split(','); //map specific field
@@ -63,21 +63,25 @@ export const stockBalanceReport = new ValidatedMethod({
                 }
                 data.fields.push({field: 'Remain QTY'}); //map total field for default
                 data.displayFields.push({field: 'remainQty'});
-                data.fields.push({field: 'Amount'}); //map total field for default
-                data.displayFields.push({field: 'amount'});
+                data.fields.push({field: 'Avg Price'}); //map total field for default
+                data.displayFields.push({field: 'averagePrice'});
+                data.fields.push({field: 'Last Amount'}); //map total field for default
+                data.displayFields.push({field: 'lastAmount'});
                 project['remainQty'] = '$lastDoc.remainQty'; //get total projection for default
-                project['amount'] = '$lastDoc.amount'; //get total projection for default
+                project['averagePrice'] = '$lastDoc.averagePrice'; //get total projection for default
+                project['lastAmount'] = '$lastDoc.lastAmount'; //get total projection for default
             } else {
                 project = {
                     'item': '$lastDoc.itemDoc.name',
                     'price': '$lastDoc.price',
                     'unit': '$lastDoc.itemDoc._unit.name',
                     'remainQty': '$lastDoc.remainQty',
-                    'amount': '$lastDoc.amount'
-
+                    'amount': '$lastDoc.amount',
+                    'lastAmount': '$lastDoc.lastAmount',
+                    'averagePrice': '$lastDoc.averagePrice'
                 };
-                data.fields = [{field: 'Item'}, {field: 'Unit'}, {field: 'Price'}, {field: 'Remain QTY'}, {field: 'Amount'}];
-                data.displayFields = [{field: 'item'}, {field: 'unit'}, {field: 'price'}, {field: 'remainQty'}, {field: 'amount'}];
+                data.fields = [{field: 'Item'}, {field: 'Unit'}, {field: 'Remain QTY'}, {field: 'Avg Price'}, {field: 'Last Amount'}];
+                data.displayFields = [{field: 'item'}, {field: 'unit'}, {field: 'remainQty'}, {field: 'averagePrice'}, {field: 'lastAmount'}];
             }
 
             /****** Title *****/
@@ -135,7 +139,9 @@ export const stockBalanceReport = new ValidatedMethod({
                         qty: 1,
                         price: 1,
                         remainQty: 1,
-                        amount: {$multiply: ["$price", "$remainQty"]}
+                        amount: 1,
+                        lastAmount: 1,
+                        averagePrice: 1
                     }
                 },
                 {
@@ -151,7 +157,7 @@ export const stockBalanceReport = new ValidatedMethod({
                             $addToSet: project
                         },
                         total: {
-                            $sum: '$lastDoc.amount'
+                            $sum: '$lastDoc.lastAmount'
                         },
                         totalRemainQty: {
                             $sum: '$lastDoc.remainQty'

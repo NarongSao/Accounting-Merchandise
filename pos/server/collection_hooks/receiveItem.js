@@ -1,5 +1,6 @@
 import 'meteor/matb33:collection-hooks';
 import {idGenerator} from 'meteor/theara:id-generator';
+import StockFunction from '../../imports/api/libs/stock';
 
 // Collection
 import {ReceiveItems} from '../../imports/api/collections/receiveItem.js';
@@ -10,6 +11,7 @@ import {LendingStocks} from '../../imports/api/collections/lendingStock.js';
 import {CompanyExchangeRingPulls} from '../../imports/api/collections/companyExchangeRingPull.js';
 import {ExchangeGratis} from '../../imports/api/collections/exchangeGratis.js';
 import {AccountIntegrationSetting} from '../../imports/api/collections/accountIntegrationSetting';
+import {Vendors} from '../../imports/api/collections/vendor.js';
 //import state
 import {receiveItemState} from '../../common/globalState/receiveItem';
 import {GroupBill} from '../../imports/api/collections/groupBill.js'
@@ -20,6 +22,21 @@ ReceiveItems.before.insert(function (userId, doc) {
     let prefix = doc.branchId + "-" + todayDate;
     let tmpBillId = doc._id;
     doc._id = idGenerator.genWithPrefix(ReceiveItems, prefix, 4);
+});
+
+
+ReceiveItems.before.update(function (userId, doc, fieldNames, modifier, options) {
+    let result = StockFunction.checkStockByLocation(doc.stockLocationId, doc.items);
+    if (!result.isEnoughStock) {
+        throw new Meteor.Error(result.message);
+    }
+});
+
+ReceiveItems.before.remove(function (userId, doc) {
+    let result = StockFunction.checkStockByLocation(doc.stockLocationId, doc.items);
+    if (!result.isEnoughStock) {
+        throw new Meteor.Error(result.message);
+    }
 });
 
 ReceiveItems.after.insert(function (userId, doc) {
@@ -39,6 +56,8 @@ ReceiveItems.after.insert(function (userId, doc) {
         if (setting && setting.integrate) {
             let inventoryChartAccount = AccountMapping.findOne({name: 'Inventory'});
             let lostInventoryChartAccount = AccountMapping.findOne({name: 'Lost Inventory'});
+
+
             transaction.push({
                 account: inventoryChartAccount.account,
                 dr: doc.total,
@@ -115,7 +134,7 @@ ReceiveItems.after.insert(function (userId, doc) {
             throw Meteor.Error('Require Receive Item type');
         }
         doc.items.forEach(function (item) {
-            averageInventoryInsert(doc.branchId, item, doc.stockLocationId, 'receiveItem', doc._id);
+            StockFunction.averageInventoryInsert(doc.branchId, item, doc.stockLocationId, 'receiveItem', doc._id);
         });
 
 
@@ -124,6 +143,12 @@ ReceiveItems.after.insert(function (userId, doc) {
             let data = doc;
             data.type = type;
             data.transaction = transaction;
+
+            let vendorDoc = Vendors.findOne({_id: doc.vendorId});
+            if (vendorDoc) {
+                data.name = vendorDoc.name;
+            }
+
             console.log(data);
             Meteor.call('insertAccountJournal', data);
         }
@@ -151,6 +176,8 @@ ReceiveItems.after.update(function (userId, doc, fieldNames, modifier, options) 
         if (setting && setting.integrate) {
             let inventoryChartAccount = AccountMapping.findOne({name: 'Inventory'});
             let lostInventoryChartAccount = AccountMapping.findOne({name: 'Lost Inventory'});
+
+
             transaction.push({
                 account: inventoryChartAccount.account,
                 dr: doc.total,
@@ -173,6 +200,9 @@ ReceiveItems.after.update(function (userId, doc, fieldNames, modifier, options) 
             if (setting && setting.integrate) {
                 type = 'PrepaidOrder-RI';
                 let InventoryOwingChartAccount = AccountMapping.findOne({name: 'Inventory Supplier Owing'});
+
+
+
                 transaction.push({
                     account: InventoryOwingChartAccount.account,
                     dr: 0,
@@ -227,15 +257,21 @@ ReceiveItems.after.update(function (userId, doc, fieldNames, modifier, options) 
         } else {
             throw Meteor.Error('Require Receive Item type');
         }
-        reduceFromInventory(preDoc, 'receive-item-return');
+        reduceFromInventory(preDoc, 'receiveItem-return');
         doc.items.forEach(function (item) {
-            averageInventoryInsert(doc.branchId, item, doc.stockLocationId, 'receiveItem', doc._id);
+            StockFunction.averageInventoryInsert(doc.branchId, item, doc.stockLocationId, 'receiveItem', doc._id);
         });
         //Account Integration
         if (setting && setting.integrate) {
             let data = doc;
             data.type = type;
             data.transaction = transaction;
+
+            let vendorDoc = Vendors.findOne({_id: doc.vendorId});
+            if (vendorDoc) {
+                data.name = vendorDoc.name;
+            }
+
             console.log(data);
             Meteor.call('updateAccountJournal', data);
         }
@@ -258,13 +294,13 @@ ReceiveItems.after.remove(function (userId, doc) {
             type = 'ExchangeGratis-RI';
             increaseExchangeGratis(doc);
         } else if (doc.type == 'CompanyExchangeRingPull') {
-            type = 'CompanyExchangeRingPull-RI';
+            type = 'RingPull-RI';
             increaseCompanyExchangeRingPull(doc);
 
         } else {
             throw Meteor.Error('Require Receive Item type');
         }
-        reduceFromInventory(doc, 'receive-item-return');
+        reduceFromInventory(doc, 'receiveItem-return');
         //Account Integration
         let setting = AccountIntegrationSetting.findOne();
         if (setting && setting.integrate) {
@@ -515,46 +551,8 @@ function averageInventoryInsert(branchId, item, stockLocationId, type, refId) {
     Item.direct.update(item.itemId, setModifier);
 }
 function reduceFromInventory(receiveItem, type) {
-    //let receiveItem = ReceiveItems.findOne(receiveItemId);
-    let prefix = receiveItem.stockLocationId + '-';
     receiveItem.items.forEach(function (item) {
-        let inventory = AverageInventories.findOne({
-            branchId: receiveItem.branchId,
-            itemId: item.itemId,
-            stockLocationId: receiveItem.stockLocationId
-        }, {sort: {_id: -1}});
-
-        if (inventory) {
-            let newInventory = {
-                _id: idGenerator.genWithPrefix(AverageInventories, prefix, 13),
-                branchId: receiveItem.branchId,
-                stockLocationId: receiveItem.stockLocationId,
-                itemId: item.itemId,
-                qty: item.qty,
-                price: inventory.price,
-                remainQty: inventory.remainQty - item.qty,
-                coefficient: -1,
-                type: type,
-                refId: receiveItem._id
-            };
-            AverageInventories.insert(newInventory);
-        } else {
-            let thisItem = Item.findOne(item.itemId);
-            let newInventory = {
-                _id: idGenerator.genWithPrefix(AverageInventories, prefix, 13),
-                branchId: receiveItem.branchId,
-                stockLocationId: receiveItem.stockLocationId,
-                itemId: item.itemId,
-                qty: item.qty,
-                price: thisItem.purchasePrice,
-                remainQty: 0 - item.qty,
-                coefficient: -1,
-                type: type,
-                refId: receiveItem._id
-            };
-            AverageInventories.insert(newInventory);
-        }
-
+        StockFunction.minusAverageInventoryInsert(receiveItem.branchId, item, receiveItem.stockLocationId, type, receiveItem._id);
     });
 
 }

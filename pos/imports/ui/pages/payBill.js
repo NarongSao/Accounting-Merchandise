@@ -19,10 +19,6 @@ let indexTmpl = Template.Pos_payBill;
 let currentPaymentDate = new ReactiveVar(moment().toDate());
 Tracker.autorun(function () {
     if (Session.get('vendorIdState')) {
-        swal({
-            title: "Pleas Wait",
-            text: "Getting Bills....", showConfirmButton: false
-        });
         Meteor.subscribe('pos.vendor', {
             _id: Session.get('vendorIdState')
         }, {});
@@ -41,9 +37,6 @@ Tracker.autorun(function () {
             });
         }
         if (billSub.ready()) {
-            setTimeout(function () {
-                swal.close()
-            }, 500);
         }
     }
     if (Session.get('invoices')) {
@@ -420,7 +413,12 @@ indexTmpl.events({
     },
     "keypress .discount" (evt) {
         var charCode = (evt.which) ? evt.which : evt.keyCode;
-        return !(charCode > 31 && (charCode < 48 || charCode > 57));
+        if ($(evt.currentTarget).val().indexOf('.') != -1) {
+            if (charCode == 46) {
+                return false;
+            }
+        }
+        return !(charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57));
     },
     'change .total' (event, instance) {
         var selectedInvoices = Session.get('enterBillsObj');
@@ -453,7 +451,12 @@ indexTmpl.events({
     },
     "keypress .total" (evt) {
         var charCode = (evt.which) ? evt.which : evt.keyCode;
-        return !(charCode > 31 && (charCode < 48 || charCode > 57));
+        if ($(evt.currentTarget).val().indexOf('.') != -1) {
+            if (charCode == 46) {
+                return false;
+            }
+        }
+        return !(charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57));
     }
 });
 

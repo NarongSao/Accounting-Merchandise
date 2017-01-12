@@ -22,10 +22,6 @@ let isPenalty = new ReactiveVar(true);
 let indexTmpl = Template.Pos_receivePayment;
 Tracker.autorun(function () {
     if (Session.get('customerId')) {
-        swal({
-            title: "Pleas Wait",
-            text: "Getting Invoices....", showConfirmButton: false
-        });
         Meteor.subscribe('pos.customer', {
             _id: Session.get('customerId')
         });
@@ -48,9 +44,6 @@ Tracker.autorun(function () {
             Meteor.call('calculateLateInvoice', {invoices}, function (err, result) {
                 countLateInvoice.set(result);
             });
-            setTimeout(function () {
-                swal.close()
-            }, 500);
         }
     }
     if (Session.get('createPenalty')) {
@@ -78,7 +71,7 @@ indexTmpl.onCreated(function () {
     createNewAlertify('penalty');
     Session.set('amountDue', 0);
     Session.set('discount', {discountIfPaidWithin: 0, discountPerecentages: 0, invoiceId: ''});
-    Session.get('disableTerm', false);
+    Session.set('disableTerm', false);
     Session.set('invoicesObjCount', 0);
     if (FlowRouter.getParam('invoiceId')) {
         Session.set('invoiceId', FlowRouter.getParam('invoiceId'));
@@ -93,7 +86,7 @@ indexTmpl.onCreated(function () {
 indexTmpl.onDestroyed(function () {
     Session.set('customerId', undefined);
     Session.set('invoices', undefined);
-    Session.get('disableTerm', false);
+    Session.set('disableTerm', false);
     Session.set('discount', {discountIfPaidWithin: 0, discountPerecentages: 0, invoiceId: ''});
     Session.set('amountDue', 0);
     Session.set('invoiceId', 0);
@@ -471,7 +464,12 @@ indexTmpl.events({
     },
     "keypress .discount" (evt) {
         var charCode = (evt.which) ? evt.which : evt.keyCode;
-        return !(charCode > 31 && (charCode < 48 || charCode > 57));
+        if ($(evt.currentTarget).val().indexOf('.') != -1) {
+            if (charCode == 46) {
+                return false;
+            }
+        }
+        return !(charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57));
     },
     'change .total' (event, instance) {
         var selectedInvoices = Session.get('invoicesObj');
@@ -506,7 +504,12 @@ indexTmpl.events({
     },
     "keypress .total" (evt) {
         var charCode = (evt.which) ? evt.which : evt.keyCode;
-        return !(charCode > 31 && (charCode < 48 || charCode > 57));
+        if ($(evt.currentTarget).val().indexOf('.') != -1) {
+            if (charCode == 46) {
+                return false;
+            }
+        }
+        return !(charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57));
     },
     "click .create-penalty"(event, instance){
         alertify.penalty(fa('', 'Create New Penalty'), renderTemplate(Template.Pos_penaltyNew));
@@ -547,8 +550,8 @@ function getLastPaymentDate(invoiceId) {
     return false;
 }
 function checkTerm(self) {
-    if (self.status == 'active') {
-        let term = Session.get('discount');
+    let term = Session.get('discount');
+    if (self.status == 'active' && term) {
         let invoiceDate = self.invoiceDate;
         let dueDate = moment(invoiceDate).add(`${term.discountIfPaidWithin}`, 'days');
         term.invoiceDate = invoiceDate;

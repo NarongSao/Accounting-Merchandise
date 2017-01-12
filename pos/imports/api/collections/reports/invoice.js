@@ -1,6 +1,7 @@
 import {SimpleSchema} from 'meteor/aldeed:simple-schema';
 import {AutoForm} from 'meteor/aldeed:autoform';
 import {moment} from 'meteor/momentjs:moment';
+import {SelectOpts} from '../../../../../core/imports/ui/libs/select-opts.js';
 
 
 export const invoiceSchema = new SimpleSchema({
@@ -11,8 +12,7 @@ export const invoiceSchema = new SimpleSchema({
             afFieldInput: {
                 type: "bootstrap-datetimepicker",
                 dateTimePickerOptions: {
-                    format: 'DD/MM/YYYY HH:mm:ss',
-
+                    format: 'DD/MM/YYYY',
                 }
             }
         }
@@ -24,7 +24,7 @@ export const invoiceSchema = new SimpleSchema({
             afFieldInput: {
                 type: "bootstrap-datetimepicker",
                 dateTimePickerOptions: {
-                    format: 'DD/MM/YYYY HH:mm:ss',
+                    format: 'DD/MM/YYYY',
 
                 }
             }
@@ -69,11 +69,34 @@ export const invoiceSchema = new SimpleSchema({
                         value: 'invoiceDate'
                     },
                     {
+                        label: 'Item',
+                        value: 'items'
+                    },
+                    {
                         label: 'Status',
                         value: 'status'
                     }
                 ]
             }
         }
-    }
+    },
+    branchId: {
+        type: [String],
+        optional: true,
+        label: function () {
+            return TAPi18n.__('core.welcome.branch');
+        },
+        autoform: {
+            type: "universe-select",
+            multiple: true,
+            options: function () {
+                return Meteor.isClient && SelectOpts.branchForCurrentUser(false);
+            },
+            afFieldInput: {
+                value: function () {
+                    return Meteor.isClient && Session.get('currentBranch');
+                }
+            }
+        }
+    },
 });

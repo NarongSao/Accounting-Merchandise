@@ -46,6 +46,11 @@ indexTmpl.helpers({
 indexTmpl.events({
     'click .print'(event, instance){
         $('#to-print').printThis();
+    },
+    'change #go-to-prepaid-order-detail'(event, instance){
+        if (event.currentTarget.value == 'prepaidOrderDetail') {
+            FlowRouter.go(`/pos/report/prepaid-order-detail?date=${moment().startOf('days').format('YYYY-MM-DD HH:mm:ss')},${moment().endOf('days').format('YYYY-MM-DD 23:59:59')}&branchId=${Session.get('currentBranch')}`);
+        }
     }
 });
 invoiceDataTmpl.helpers({
@@ -101,6 +106,7 @@ AutoForm.hooks({
             this.event.preventDefault();
             FlowRouter.query.unset();
             let params = {};
+            params.branchId = Session.get('currentBranch')
             if (doc.fromDate && doc.toDate) {
                 let fromDate = moment(doc.fromDate).format('YYYY-MM-DD HH:mm:ss');
                 let toDate = moment(doc.toDate).format('YYYY-MM-DD HH:mm:ss');
@@ -109,8 +115,8 @@ AutoForm.hooks({
             if (doc.vendorId) {
                 params.vendor = doc.vendor
             }
-            if (doc.filter) {
-                params.filter = doc.filter.join(',');
+            if (doc.branchId) {
+                params.branchId = doc.branchId.join(',');
             }
             FlowRouter.query.set(params);
             paramsState.set(FlowRouter.query.params());

@@ -667,3 +667,33 @@ PosRoutes.route('/transferMoneyRequest', {
     }
 
 });
+
+import '../imports/ui/pages/admin-dashboard/adminDashboard';
+PosRoutes.route('/admin-dashboard', {
+    name: 'pos.adminDashboard',
+    title: 'Admin Dashboard',
+    action: function (params, queryParams) {
+        Layout.main('Pos_adminDashboard');
+    },
+    breadcrumb: {
+        title: 'Admin Dashboard',
+        icon: '',
+        parent: 'pos.home'
+    }
+
+});
+
+import '../imports/ui/pages/targetItem';
+PosRoutes.route('/target-item', {
+    name: 'pos.targetItem',
+    title: 'Target Item',
+    action: function (params, queryParams) {
+        Layout.main('Pos_targetItem');
+    },
+    breadcrumb: {
+        title: 'Target Item',
+        icon: '',
+        parent: 'pos.home'
+    }
+
+});

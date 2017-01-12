@@ -8,6 +8,7 @@ import {AverageInventories} from '../../imports/api/collections/inventory.js';
 import {Item} from '../../imports/api/collections/item.js';
 import {PrepaidOrders} from '../../imports/api/collections/prepaidOrder';
 import {AccountMapping} from '../../imports/api/collections/accountMapping.js';
+import {Vendors} from '../../imports/api/collections/vendor.js';
 //import state
 import {billState} from '../../common/globalState/enterBill';
 import {GroupBill} from '../../imports/api/collections/groupBill.js'
@@ -37,7 +38,7 @@ EnterBills.after.insert(function (userId, doc) {
             Meteor.call('pos.generateInvoiceGroup', {doc});
         }
         doc.items.forEach(function (item) {
-            let id = StockFunction.averageInventoryInsert(doc.branchId, item, doc.stockLocationId, 'insert-bill', doc._id);
+            let id = StockFunction.averageInventoryInsertForBill(doc.branchId, item, doc.stockLocationId, 'insert-bill', doc._id);
             inventoryIdList.push(id);
         });
         //Account Integration
@@ -49,6 +50,12 @@ EnterBills.after.insert(function (userId, doc) {
             let transaction = [];
             let data = doc;
             data.type = "EnterBill";
+
+            let vendorDoc = Vendors.findOne({_id: doc.vendorId});
+            if (vendorDoc) {
+                data.name = vendorDoc.name;
+            }
+
             /* data.items.forEach(function (item) {
              let itemDoc = Item.findOne(item.itemId);
              if (itemDoc.accountMapping.inventoryAsset && itemDoc.accountMapping.accountPayable) {
@@ -72,8 +79,24 @@ EnterBills.after.insert(function (userId, doc) {
         }
         //End Account Integration
     });
-})
-;
+});
+
+
+
+EnterBills.before.update(function (userId, doc, fieldNames, modifier, options) {
+    let result = StockFunction.checkStockByLocation(doc.stockLocationId, doc.items);
+    if (!result.isEnoughStock) {
+        throw new Meteor.Error(result.message);
+    }
+});
+
+EnterBills.before.remove(function (userId, doc) {
+    let result = StockFunction.checkStockByLocation(doc.stockLocationId, doc.items);
+    if (!result.isEnoughStock) {
+        throw new Meteor.Error(result.message);
+    }
+});
+
 
 EnterBills.after.update(function (userId, doc, fieldNames, modifier, options) {
     let preDoc = this.previous;
@@ -98,12 +121,12 @@ EnterBills.after.update(function (userId, doc, fieldNames, modifier, options) {
         Meteor._sleepForMs(200);
         let inventoryIdList = [];
         preDoc.items.forEach(function (preItem) {
-            let id = StockFunction.minusAverageInventoryInsert(preDoc.branchId, preItem, preDoc.stockLocationId, 'reduce-from-bill', doc._id);
+            let id = StockFunction.minusAverageInventoryInsertForBill(preDoc.branchId, preItem, preDoc.stockLocationId, 'reduce-from-bill', doc._id);
             inventoryIdList.push(id);
         });
         //reduceFromInventory(preDoc);
         doc.items.forEach(function (item) {
-            let id = StockFunction.averageInventoryInsert(doc.branchId, item, doc.stockLocationId, 'enterBill', doc._id);
+            let id = StockFunction.averageInventoryInsertForBill(doc.branchId, item, doc.stockLocationId, 'enterBill', doc._id);
             inventoryIdList.push(id);
         });
 
@@ -132,6 +155,13 @@ EnterBills.after.update(function (userId, doc, fieldNames, modifier, options) {
                     })
                 }
             });*/
+
+            let vendorDoc = Vendors.findOne({_id: doc.vendorId});
+            if (vendorDoc) {
+                data.name = vendorDoc.name;
+            }
+
+
             transaction.push({
                 account: inventoryChartAccount.account,
                 dr: doc.total,
@@ -162,12 +192,12 @@ EnterBills.after.remove(function (userId, doc) {
         if (type.group) {
             //reduceFromInventory(doc);
             doc.items.forEach(function (item) {
-                let id = StockFunction.minusAverageInventoryInsert(doc.branchId, item, doc.stockLocationId, 'reduce-from-bill', doc._id);
+                let id = StockFunction.minusAverageInventoryInsertForBill(doc.branchId, item, doc.stockLocationId, 'reduce-from-bill', doc._id);
                 inventoryIdList.push(id);
             });
             removeBillFromGroup(doc);
             let groupBill = GroupBill.findOne(doc.paymentGroupId);
-            if (groupBill.invoices.length <= 0) {
+            if (groupBill && groupBill.invoices.length <= 0) {
                 GroupBill.direct.remove(doc.paymentGroupId);
             } else {
                 recalculatePaymentAfterRemoved({doc});
@@ -175,7 +205,7 @@ EnterBills.after.remove(function (userId, doc) {
         } else {
             //  reduceFromInventory(doc);
             doc.items.forEach(function (item) {
-                let id = StockFunction.minusAverageInventoryInsert(doc.branchId, item, doc.stockLocationId, 'reduce-from-bill', doc._id);
+                let id = StockFunction.minusAverageInventoryInsertForBill(doc.branchId, item, doc.stockLocationId, 'reduce-from-bill', doc._id);
                 inventoryIdList.push(id);
             });
         }

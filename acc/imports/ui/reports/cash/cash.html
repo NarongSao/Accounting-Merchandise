@@ -2,13 +2,20 @@
     <div class="box-body">
         {{#autoForm schema=schema id="acc_cashReport"  action="cashReportGen" target="_blank"}}
             <div class="animated fadeIn">
-                <div class="panel panel-default report-heading">
-                    <div class="panel-heading">
-                        <h3 class="panel-title font-head-panel-kh">ចុចទីនេះដើម្បីបង្ហាញ ឬ លាក់ <span
-                                class="font-head-panel-en">Form</span></h3>
-                        <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
+                <div class="box box-primary direct-chat direct-chat-success">
+                    <div class="box-header with-border">
+                        <h3 class="box-title" style="font-family: 'Khmer OS Battambang'">ចុចទីនេះដើម្បីបង្ហាញ ឬ លាក់
+                            <span
+                                    class="font-head-panel-en">Form</span></h3>
+
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                            </button>
+                        </div>
                     </div>
-                    <div class="panel-body">
+                    <!-- /.box-header -->
+                    <div class="box-body">
+
                         <div class="row " style="background: rgb(227, 234, 243); padding: 10px; margin: 0;">
                             <div class="col-md-6">
                                 {{> afQuickField name='branchId'}}
@@ -21,17 +28,16 @@
                             </div>
 
                         </div>
-                    </div>
 
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer">
+                        {{> formFooterWithButtonPrintFullscreenReport}}
+                    </div>
+                    <!-- /.box-footer-->
                 </div>
             </div>
-
-            {{> formFooterWithButtonPrintFullscreenReport}}
-            <!--<button type="submit" class="btn btn-primary">{{fa "file-text"}} Generate</button>
-                <button type="reset" class="btn btn-default">{{fa "refresh"}} Reset</button>-->
         {{/autoForm}}
-
-        <hr>
         {{> acc_cashReportPrintData}}
     </div>
 </template>
@@ -208,7 +214,7 @@
 <template name="acc_cashReportPrintData">
     <!--#print-data-->
     <div id="print-data">
-        <div class="rpt rpt-3x sub-table">
+        <div class="sub-div display-on-print-div">
             {{#if rptInit}}
                 {{#if rptData}}
                     {{#with rptData}}
@@ -255,8 +261,8 @@
                         {{/with}}
 
                         <!--Content-->
-                        <table class="sub-table table table-striped" border="1">
-                            <thead class="sub-header rpt rpt-3x">
+                        <table class="sub-table table table-striped table-hover diplay-on-print-table">
+                            <thead class="sub-header diplay-on-print-header">
                             <tr>
                                 <th width="40px">No</th>
                                 <th>Date</th>
@@ -270,7 +276,7 @@
                                 <th>Balance</th>
                             </tr>
                             </thead>
-                            <tbody class="rpt rpt-3x sub-body">
+                            <tbody class="sub-body display-on-print-body">
                             {{#each content}}
                                 {{#if isHeader}}
                                     <tr style="background-color:#EFFFEF;">

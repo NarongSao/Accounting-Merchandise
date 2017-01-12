@@ -84,7 +84,7 @@ Tracker.autorun(function () {
         var currentCurrency = Session.get('currencyId');
         var dobSelect = Session.get('dobSelect');
         var startYear = moment(dobSelect).year();
-        var startDate = moment('01/01/' + startYear).toDate();
+        var startDate = moment('01/01/' + startYear,'DD/MM/YYYY').toDate();
         Meteor.call('acc_getVoucherId', currentCurrency, startDate, Session.get("currentBranch"), function (err, result) {
             if (result != undefined) {
                 Session.set('lastVoucherId', parseInt((result.voucherId).substr(8, 13)) + 1);
@@ -835,6 +835,7 @@ var disableDate = function () {
 
     },
     disableDateUpdate = function (id) {
+        debugger;
         var selectorGetLastDate = {};
         var selectorGetLastDateStart = {};
         var branchId = Session.get("currentBranch");
