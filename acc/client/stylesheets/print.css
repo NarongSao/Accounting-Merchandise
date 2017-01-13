@@ -42,7 +42,7 @@
         margin-top: 30px;
     }
 
-    .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+    .display-on-print-div .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
         border: 1px solid black !important;
     }
 
@@ -64,7 +64,6 @@
     color: #000000;
     font-size: 14px;
 }
-
 
 
 
