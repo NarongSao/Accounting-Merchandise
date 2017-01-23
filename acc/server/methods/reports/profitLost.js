@@ -95,7 +95,7 @@ Meteor.methods({
 
             var dataExpense = {};
             var dataIncome = {};
-            var dataCOGS= {};
+            var dataCOGS = {};
 
             //To get Last Date of CLose Chart Account
             var selectorEnd = {};
@@ -169,9 +169,9 @@ Meteor.methods({
             var temporaryIncome = "";
             var isPushIncome = true;
 
-            var subTotalCOGS= 0;
-            var temporaryCOGS= "";
-            var isPushCOGS= true;
+            var subTotalCOGS = 0;
+            var temporaryCOGS = "";
+            var isPushCOGS = true;
 
             var subTotalExpenseYearToDate = 0;
 
@@ -370,7 +370,7 @@ Meteor.methods({
                 }
                 if (obj.level > 0) {
                     if (temporaryCOGS !== obj.parent) {
-                        dataCOGS= ChartAccount.findOne({
+                        dataCOGS = ChartAccount.findOne({
                             _id: obj.parent
                         });
                         resultCOGSFinal.push({
@@ -387,11 +387,11 @@ Meteor.methods({
 
                     } else {
                         subTotalCOGSYearToDate += obj.resultYearToDate;
-                        subTotalCOGS+= obj.result;
+                        subTotalCOGS += obj.result;
                     }
-                    isPushCOGS= false;
+                    isPushCOGS = false;
                 }
-                temporaryCOGS= obj.parent;
+                temporaryCOGS = obj.parent;
                 resultCOGSFinal.push({
                     result: obj.result,
                     account: obj.account,
@@ -405,70 +405,59 @@ Meteor.methods({
             })
 
 
-
-
-
-
-
-
-
-
-
-
             var resultEnpenseFinal = [];
             resultExpense.sort(compare);
 
 
             resultExpense.map(function (obj) {
 
-                if (obj.code != cogs.accountDoc.code) {
-                    if (temporaryExpense !== obj.parent & isPushExpense == false) {
+
+                if (temporaryExpense !== obj.parent & isPushExpense == false) {
+                    resultEnpenseFinal.push({
+                        name: dataExpense.name,
+                        account: dataExpense.account,
+                        code: SpaceChar.space(6 * dataExpense.level) +
+                        'Total : ' + dataExpense.code,
+                        result: subTotalExpense,
+                        resultYearToDate: subTotalExpenseYearToDate
+                    });
+                    isPushExpense = true;
+                }
+                if (obj.level > 0) {
+                    if (temporaryExpense !== obj.parent) {
+                        dataExpense = ChartAccount.findOne({
+                            _id: obj.parent
+                        });
                         resultEnpenseFinal.push({
                             name: dataExpense.name,
                             account: dataExpense.account,
                             code: SpaceChar.space(6 * dataExpense.level) +
-                            'Total : ' + dataExpense.code,
-                            result: subTotalExpense,
-                            resultYearToDate: subTotalExpenseYearToDate
+                            dataExpense.code,
+                            result: "title",
+                            resultYearToDate: "title"
                         });
-                        isPushExpense = true;
 
+                        subTotalExpense = obj.result;
+                        subTotalExpenseYearToDate = obj.resultYearToDate;
+
+                    } else {
+                        subTotalExpenseYearToDate += obj.resultYearToDate;
+                        subTotalExpense += obj.result;
                     }
-                    if (obj.level > 0) {
-                        if (temporaryExpense !== obj.parent) {
-                            dataExpense = ChartAccount.findOne({
-                                _id: obj.parent
-                            });
-                            resultEnpenseFinal.push({
-                                name: dataExpense.name,
-                                account: dataExpense.account,
-                                code: SpaceChar.space(6 * dataExpense.level) +
-                                dataExpense.code,
-                                result: "title",
-                                resultYearToDate: "title"
-                            });
-
-                            subTotalExpense = obj.result;
-                            subTotalExpenseYearToDate = obj.resultYearToDate;
-
-                        } else {
-                            subTotalExpenseYearToDate += obj.resultYearToDate;
-                            subTotalExpense += obj.result;
-                        }
-                        isPushExpense = false;
-                    }
-                    temporaryExpense = obj.parent;
-                    resultEnpenseFinal.push({
-                        result: obj.result,
-                        account: obj.account,
-                        resultYearToDate: obj.resultYearToDate,
-                        name: obj.name,
-                        currency: obj.currency,
-                        code: SpaceChar.space(6 * obj.level) + obj.code,
-                        parent: obj.parent,
-                        level: obj.level
-                    });
+                    isPushExpense = false;
                 }
+                temporaryExpense = obj.parent;
+                resultEnpenseFinal.push({
+                    result: obj.result,
+                    account: obj.account,
+                    resultYearToDate: obj.resultYearToDate,
+                    name: obj.name,
+                    currency: obj.currency,
+                    code: SpaceChar.space(6 * obj.level) + obj.code,
+                    parent: obj.parent,
+                    level: obj.level
+                });
+
             });
 
             if (isPushExpense == false) {
@@ -486,7 +475,7 @@ Meteor.methods({
             // Total COGS
             data.grandTotalCOGS = grandTotalCOGS;
             data.grandTotalCOGSYearToDate = grandTotalCOGSYearToDate;
-            data.resultCOGS= resultCOGSFinal;
+            data.resultCOGS = resultCOGSFinal;
 
 
             // Total Income
@@ -587,7 +576,7 @@ Meteor.methods({
 
             var dataExpense = {};
             var dataIncome = {};
-            var dataCOGS= {};
+            var dataCOGS = {};
 
             //To get Last Date of CLose Chart Account
             var selectorEnd = {};
@@ -653,7 +642,7 @@ Meteor.methods({
             var content = {};
             var resultIncome = [];
             var resultExpense = [];
-            var resultCOGS= [];
+            var resultCOGS = [];
 
             var grandTotalIncome = 0;
             var grandTotalIncomeUSD = 0;
@@ -697,11 +686,11 @@ Meteor.methods({
 
 
             var subTotalCOGS = 0;
-            var subTotalUSDCOGS= 0;
-            var subTotalRielCOGS= 0;
-            var subTotalTHBCOGS= 0;
-            var temporaryCOGS= "";
-            var isPushCOGS= true;
+            var subTotalUSDCOGS = 0;
+            var subTotalRielCOGS = 0;
+            var subTotalTHBCOGS = 0;
+            var temporaryCOGS = "";
+            var isPushCOGS = true;
 
             var subTotalCOGSYearToDate = 0;
 
@@ -709,128 +698,128 @@ Meteor.methods({
             contentProfit.reduce(function (key, val) {
                 if (val.thisMonth == true) {
                     if (!key[val.account]) {
-                            var amountUsd = 0,
-                                amountRiel = 0,
-                                amountThb = 0;
-                            if (val.currency == "USD") {
-                                amountUsd = val.value;
-                            } else if (val.currency == "KHR") {
-                                amountRiel = val.value;
-                            } else if (val.currency == "THB") {
-                                amountThb = val.value;
-                            }
-                            key[val.account] = {
-                                account: val.account,
-                                result: val.result,
-                                resultYearToDate: val.result,
-                                name: val.name,
-                                currency: baseCurrency,
-                                code: val.code,
-                                amountUsd: amountUsd,
-                                amountRiel: amountRiel,
-                                amountThb: amountThb,
-                                parent: val.parent,
-                                level: val.level
-                            };
-                            if (val.accountType >= 40 && val.accountType <= 49) {
-                                resultIncome.push(key[val.account]);
-                            }
-                            else if (val.accountType >= 50 && val.accountType <= 59) {
-                                resultExpense.push(key[val.account]);
-                            }else {
-                                resultCOGS.push(key[val.account]);
-                            }
-
+                        var amountUsd = 0,
+                            amountRiel = 0,
+                            amountThb = 0;
+                        if (val.currency == "USD") {
+                            amountUsd = val.value;
+                        } else if (val.currency == "KHR") {
+                            amountRiel = val.value;
+                        } else if (val.currency == "THB") {
+                            amountThb = val.value;
                         }
-                        else {
-                            key[val.account].result += math.round(val.result, 2);
-                            key[val.account].resultYearToDate += math.round(val.result, 2);
-
-                            if (val.currency == "USD") {
-                                key[val.account].amountUsd += math.round(val.value, 2);
-                            } else if (val.currency == "KHR") {
-                                key[val.account].amountRiel += math.round(val.value, 2);
-                            } else if (val.currency == "THB") {
-                                key[val.account].amountThb += math.round(val.value, 2);
-                            }
-                        }
-
-
+                        key[val.account] = {
+                            account: val.account,
+                            result: val.result,
+                            resultYearToDate: val.result,
+                            name: val.name,
+                            currency: baseCurrency,
+                            code: val.code,
+                            amountUsd: amountUsd,
+                            amountRiel: amountRiel,
+                            amountThb: amountThb,
+                            parent: val.parent,
+                            level: val.level
+                        };
                         if (val.accountType >= 40 && val.accountType <= 49) {
-                            grandTotalIncome += math.round(val.result, 2);
-                            grandTotalIncomeYearToDate += math.round(val.result, 2);
-                            if (val.currency == "USD") {
-                                grandTotalIncomeUSD += math.round(val.value, 2);
-                            } else if (val.currency == "KHR") {
-                                grandTotalIncomeR += math.round(val.value, 2);
-                            } else if (val.currency == "THB") {
-                                grandTotalIncomeB += math.round(val.value, 2);
-                            }
+                            resultIncome.push(key[val.account]);
                         }
                         else if (val.accountType >= 50 && val.accountType <= 59) {
-                            grandTotalExpense += math.round(val.result, 2);
-                            grandTotalExpenseYearToDate += math.round(val.result, 2);
-
-                            if (val.currency == "USD") {
-                                grandTotalExpenseUSD += math.round(val.value, 2);
-                            } else if (val.currency == "KHR") {
-                                grandTotalExpenseR += math.round(val.value, 2);
-                            } else if (val.currency == "THB") {
-                                grandTotalExpenseB += math.round(val.value, 2);
-                            }
-                        }else{
-                            grandTotalCOGS += math.round(val.result, 2);
-                            grandTotalCOGSYearToDate += math.round(val.result, 2);
-
-                            if (val.currency == "USD") {
-                                grandTotalCOGSUSD += math.round(val.value, 2);
-                            } else if (val.currency == "KHR") {
-                                grandTotalCOGSR += math.round(val.value, 2);
-                            } else if (val.currency == "THB") {
-                                grandTotalCOGSB += math.round(val.value, 2);
-                            }
+                            resultExpense.push(key[val.account]);
+                        } else {
+                            resultCOGS.push(key[val.account]);
                         }
+
+                    }
+                    else {
+                        key[val.account].result += math.round(val.result, 2);
+                        key[val.account].resultYearToDate += math.round(val.result, 2);
+
+                        if (val.currency == "USD") {
+                            key[val.account].amountUsd += math.round(val.value, 2);
+                        } else if (val.currency == "KHR") {
+                            key[val.account].amountRiel += math.round(val.value, 2);
+                        } else if (val.currency == "THB") {
+                            key[val.account].amountThb += math.round(val.value, 2);
+                        }
+                    }
+
+
+                    if (val.accountType >= 40 && val.accountType <= 49) {
+                        grandTotalIncome += math.round(val.result, 2);
+                        grandTotalIncomeYearToDate += math.round(val.result, 2);
+                        if (val.currency == "USD") {
+                            grandTotalIncomeUSD += math.round(val.value, 2);
+                        } else if (val.currency == "KHR") {
+                            grandTotalIncomeR += math.round(val.value, 2);
+                        } else if (val.currency == "THB") {
+                            grandTotalIncomeB += math.round(val.value, 2);
+                        }
+                    }
+                    else if (val.accountType >= 50 && val.accountType <= 59) {
+                        grandTotalExpense += math.round(val.result, 2);
+                        grandTotalExpenseYearToDate += math.round(val.result, 2);
+
+                        if (val.currency == "USD") {
+                            grandTotalExpenseUSD += math.round(val.value, 2);
+                        } else if (val.currency == "KHR") {
+                            grandTotalExpenseR += math.round(val.value, 2);
+                        } else if (val.currency == "THB") {
+                            grandTotalExpenseB += math.round(val.value, 2);
+                        }
+                    } else {
+                        grandTotalCOGS += math.round(val.result, 2);
+                        grandTotalCOGSYearToDate += math.round(val.result, 2);
+
+                        if (val.currency == "USD") {
+                            grandTotalCOGSUSD += math.round(val.value, 2);
+                        } else if (val.currency == "KHR") {
+                            grandTotalCOGSR += math.round(val.value, 2);
+                        } else if (val.currency == "THB") {
+                            grandTotalCOGSB += math.round(val.value, 2);
+                        }
+                    }
 
                 }
                 else {
-                        if (!key[val.account]) {
-                            key[val.account] = {
-                                account: val.account,
-                                result: 0,
-                                resultYearToDate: val.result,
-                                name: val.name,
-                                currency: baseCurrency,
-                                code: val.code,
-                                amountUsd: 0,
-                                amountRiel: 0,
-                                amountThb: 0,
-                                parent: val.parent,
-                                level: val.level
-                            };
-                            if (val.accountType >= 40 && val.accountType <= 49) {
+                    if (!key[val.account]) {
+                        key[val.account] = {
+                            account: val.account,
+                            result: 0,
+                            resultYearToDate: val.result,
+                            name: val.name,
+                            currency: baseCurrency,
+                            code: val.code,
+                            amountUsd: 0,
+                            amountRiel: 0,
+                            amountThb: 0,
+                            parent: val.parent,
+                            level: val.level
+                        };
+                        if (val.accountType >= 40 && val.accountType <= 49) {
 
-                                resultIncome.push(key[val.account]);
-                                grandTotalIncomeYearToDate += math.round(val.result, 2);
-                            } else if (val.accountType >= 50 && val.accountType <= 59) {
+                            resultIncome.push(key[val.account]);
+                            grandTotalIncomeYearToDate += math.round(val.result, 2);
+                        } else if (val.accountType >= 50 && val.accountType <= 59) {
 
-                                resultExpense.push(key[val.account]);
-                                grandTotalExpenseYearToDate += math.round(val.result, 2);
-                            }else {
-                                resultCOGS.push(key[val.account]);
-                                grandTotalCOGSYearToDate += math.round(val.result, 2);
-                            }
+                            resultExpense.push(key[val.account]);
+                            grandTotalExpenseYearToDate += math.round(val.result, 2);
+                        } else {
+                            resultCOGS.push(key[val.account]);
+                            grandTotalCOGSYearToDate += math.round(val.result, 2);
                         }
-                        else {
-                            key[val.account].resultYearToDate += math.round(val.result, 2);
+                    }
+                    else {
+                        key[val.account].resultYearToDate += math.round(val.result, 2);
 
-                            if (val.accountType >= 40 && val.accountType <= 49) {
-                                grandTotalIncomeYearToDate += math.round(val.result, 2);
-                            } else if (val.accountType >= 50 && val.accountType <= 59) {
-                                grandTotalExpenseYearToDate += math.round(val.result, 2);
-                            }else {
-                                grandTotalCOGSYearToDate += math.round(val.result, 2);
-                            }
+                        if (val.accountType >= 40 && val.accountType <= 49) {
+                            grandTotalIncomeYearToDate += math.round(val.result, 2);
+                        } else if (val.accountType >= 50 && val.accountType <= 59) {
+                            grandTotalExpenseYearToDate += math.round(val.result, 2);
+                        } else {
+                            grandTotalCOGSYearToDate += math.round(val.result, 2);
                         }
+                    }
 
                 }
 
@@ -923,13 +912,6 @@ Meteor.methods({
             }
 
 
-
-
-
-
-
-
-
             var resultCOGSFinal = [];
             resultCOGS.sort(compare);
 
@@ -946,11 +928,11 @@ Meteor.methods({
                         amountThb: subTotalTHBCOGS,
                         resultYearToDate: subTotalCOGSYearToDate
                     });
-                    isPushCOGS= true;
+                    isPushCOGS = true;
 
                 }
                 if (obj.level > 0) {
-                    if (temporaryCOGS!== obj.parent) {
+                    if (temporaryCOGS !== obj.parent) {
                         dataCOGS = ChartAccount.findOne({
                             _id: obj.parent
                         });
@@ -1014,14 +996,6 @@ Meteor.methods({
             }
 
 
-
-
-
-
-
-
-
-
             var resultEnpenseFinal = [];
 
             resultExpense.sort(compare);
@@ -1029,70 +1003,69 @@ Meteor.methods({
 
             resultExpense.map(function (obj) {
 
-                if (obj.code != cogs.accountDoc.code) {
 
-                    if (temporaryExpense !== obj.parent && isPushExpense == false) {
+                if (temporaryExpense !== obj.parent && isPushExpense == false) {
+                    resultEnpenseFinal.push({
+                        name: dataExpense.name,
+                        account: dataExpense.account,
+                        code: SpaceChar.space(6 * dataExpense.level) +
+                        'Total : ' + dataExpense.code,
+                        result: subTotalExpense,
+                        amountUsd: subTotalUSDExpense,
+                        amountRiel: subTotalRielExpense,
+                        amountThb: subTotalTHBExpense,
+                        resultYearToDate: subTotalExpenseYearToDate
+                    });
+                    isPushExpense = true;
+                }
+
+                if (obj.level > 0) {
+                    if (temporaryExpense !== obj.parent) {
+                        dataExpense = ChartAccount.findOne({
+                            _id: obj.parent
+                        });
                         resultEnpenseFinal.push({
                             name: dataExpense.name,
                             account: dataExpense.account,
                             code: SpaceChar.space(6 * dataExpense.level) +
-                            'Total : ' + dataExpense.code,
-                            result: subTotalExpense,
-                            amountUsd: subTotalUSDExpense,
-                            amountRiel: subTotalRielExpense,
-                            amountThb: subTotalTHBExpense,
-                            resultYearToDate: subTotalExpenseYearToDate
+                            dataExpense.code,
+                            result: "title",
+                            resultYearToDate: "title",
+                            amountUsd: "title",
+                            amountRiel: "title",
+                            amountThb: "title"
                         });
-                        isPushExpense = true;
 
+                        subTotalExpense = obj.result;
+                        subTotalExpenseYearToDate = obj.resultYearToDate;
+                        subTotalUSDExpense = obj.amountUsd;
+                        subTotalRielExpense = obj.amountRiel;
+                        subTotalTHBExpense = obj.amountThb;
+
+                    } else {
+                        subTotalExpenseYearToDate += obj.resultYearToDate;
+                        subTotalExpense += obj.result;
+                        subTotalUSDExpense += obj.amountUsd;
+                        subTotalRielExpense += obj.amountRiel;
+                        subTotalTHBExpense += obj.amountThb;
                     }
-                    if (obj.level > 0) {
-                        if (temporaryExpense !== obj.parent) {
-                            dataExpense = ChartAccount.findOne({
-                                _id: obj.parent
-                            });
-                            resultEnpenseFinal.push({
-                                name: dataExpense.name,
-                                account: dataExpense.account,
-                                code: SpaceChar.space(6 * dataExpense.level) +
-                                dataExpense.code,
-                                result: "title",
-                                resultYearToDate: "title",
-                                amountUsd: "title",
-                                amountRiel: "title",
-                                amountThb: "title"
-                            });
-
-                            subTotalExpense = obj.result;
-                            subTotalExpenseYearToDate = obj.resultYearToDate;
-                            subTotalUSDExpense = obj.amountUsd;
-                            subTotalRielExpense = obj.amountRiel;
-                            subTotalTHBExpense = obj.amountThb;
-
-                        } else {
-                            subTotalExpenseYearToDate += obj.resultYearToDate;
-                            subTotalExpense += obj.result;
-                            subTotalUSDExpense += obj.amountUsd;
-                            subTotalRielExpense += obj.amountRiel;
-                            subTotalTHBExpense += obj.amountThb;
-                        }
-                        isPushExpense = false;
-                    }
-                    temporaryExpense = obj.parent;
-                    resultEnpenseFinal.push({
-                        result: obj.result,
-                        account: obj.account,
-                        resultYearToDate: obj.resultYearToDate,
-                        name: obj.name,
-                        currency: obj.currency,
-                        code: SpaceChar.space(6 * obj.level) + obj.code,
-                        amountUsd: obj.amountUsd,
-                        amountRiel: obj.amountRiel,
-                        amountThb: obj.amountThb,
-                        parent: obj.parent,
-                        level: obj.level
-                    });
+                    isPushExpense = false;
                 }
+                temporaryExpense = obj.parent;
+                resultEnpenseFinal.push({
+                    result: obj.result,
+                    account: obj.account,
+                    resultYearToDate: obj.resultYearToDate,
+                    name: obj.name,
+                    currency: obj.currency,
+                    code: SpaceChar.space(6 * obj.level) + obj.code,
+                    amountUsd: obj.amountUsd,
+                    amountRiel: obj.amountRiel,
+                    amountThb: obj.amountThb,
+                    parent: obj.parent,
+                    level: obj.level
+                });
+
             });
 
             if (isPushExpense == false) {
@@ -1124,7 +1097,7 @@ Meteor.methods({
 
             // Total COGS
 
-            data.resultCOGS= resultCOGSFinal;
+            data.resultCOGS = resultCOGSFinal;
 
 
             data.grandTotalCOGS = grandTotalCOGS;
@@ -1132,7 +1105,6 @@ Meteor.methods({
             data.grandTotalRielCOGS = grandTotalCOGSR;
             data.grandTotalThbCOGS = grandTotalCOGSB;
             data.grandTotalCOGSYearToDate = grandTotalCOGSYearToDate;
-
 
 
             // Gross profit
