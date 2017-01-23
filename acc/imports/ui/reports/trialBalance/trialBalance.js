@@ -111,7 +111,7 @@ tmplPrintData.events({
         pa.dateRange=dateRange;
 
         pa.chartAccount=self.account;
-        pa.accountType=['10','11','12','20','21','30','40','41','50','51'];
+        pa.accountType=['10','11','12','20','21','30','40','41','50','51','60'];
 
         var path='/acc/transactionDetailReport?branchId='+pa.branchId+'&accountType='+
             pa.accountType+'&chartAccount='+pa.chartAccount
