@@ -428,6 +428,9 @@ Meteor.methods({
                         amountRiel: o.amountRiel,
                         amountThb: o.amountThb
                     });
+                    dataOld = ChartAccount.findOne({
+                        _id: temporary
+                    });
 
 
                 } else if (o.accountTypeId == "11") {
@@ -1424,6 +1427,10 @@ Meteor.methods({
                         amountUsd: o.amountUsd,
                         amountRiel: o.amountRiel,
                         amountThb: o.amountThb
+                    });
+
+                    dataOld = ChartAccount.findOne({
+                        _id: temporary
                     });
 
 
