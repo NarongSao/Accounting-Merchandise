@@ -181,7 +181,6 @@ Meteor.methods({
                             if (oldData != undefined) {
                                 oldData.transaction.forEach(function (oldDataTran) {
                                         if (oldDataTran.accountDoc._id == obj._id) {
-                                            console.log("Org : "+ oldDataTran.drcr);
                                             var convertDrcrOld = Meteor.call('exchange',
                                                 oldData.currencyId, baseCurrency, oldDataTran
                                                     .drcr, exchangeDate);
