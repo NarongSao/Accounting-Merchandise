@@ -10,10 +10,10 @@ let Rates = new SimpleSchema({
     KHR: {
         type: Number,
         label: function () {
-            return TAPi18n.__('core.exchange.khrLbl')+" Ex : 1";
+            return TAPi18n.__('core.exchange.khrLbl');
         },
         decimal: true,
-        min: 1,
+        min: 0.1,
         autoform: {
             type: 'inputmask',
             inputmaskOptions: function () {
@@ -24,10 +24,10 @@ let Rates = new SimpleSchema({
     USD: {
         type: Number,
         label: function () {
-            return TAPi18n.__('core.exchange.usdLbl')+ " Ex: 4070";
+            return TAPi18n.__('core.exchange.usdLbl');
         },
         decimal: true,
-        min: 1,
+        min: 0.1,
         autoform: {
             type: 'inputmask',
             inputmaskOptions: function () {
@@ -38,10 +38,10 @@ let Rates = new SimpleSchema({
     THB: {
         type: Number,
         label: function () {
-            return TAPi18n.__('core.exchange.thbLbl')+ " Ex: 130";
+            return TAPi18n.__('core.exchange.thbLbl');
         },
         decimal: true,
-        min: 1,
+        min: 0.1,
         autoform: {
             type: 'inputmask',
             inputmaskOptions: function () {
@@ -68,10 +68,6 @@ Exchange.schema = new SimpleSchema({
                 }
             }
         }
-    },
-    exDateText: {
-        type: String,
-        optional: true
     },
     base: {
         type: String,

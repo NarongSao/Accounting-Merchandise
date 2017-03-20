@@ -28,15 +28,25 @@
     <div class="box-body">
         {{#autoForm collection=collection id="Core_exchangeNew" type="insert"}}
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-6">
                     {{> afQuickField name="exDate"}}
+                </div>
+                <div class="col-md-6">
                     {{> afQuickField name="base" value=doc.base readonly="true"}}
+                </div>
+            </div>
 
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Rates</div>
-                        <div class="panel-body">
+            <div class="panel panel-default">
+                <div class="panel-heading">Rates</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-4">
                             {{> afQuickField name="rates.KHR" value=doc.khr}}
+                        </div>
+                        <div class="col-md-4">
                             {{> afQuickField name="rates.USD" value=doc.usd}}
+                        </div>
+                        <div class="col-md-4">
                             {{> afQuickField name="rates.THB" value=doc.thb}}
                         </div>
                     </div>
@@ -54,15 +64,25 @@
         {{#if Template.subscriptionsReady}}
             {{#autoForm collection=collection id="Core_exchangeEdit" doc=doc type="update"}}
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-6">
                         {{> afQuickField name="exDate"}}
+                    </div>
+                    <div class="col-md-6">
                         {{> afQuickField name="base" readonly="true"}}
+                    </div>
+                </div>
 
-                        <div class="panel panel-default">
-                            <div class="panel-heading">Rates</div>
-                            <div class="panel-body">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Rates</div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-4">
                                 {{> afQuickField name="rates.KHR"}}
+                            </div>
+                            <div class="col-md-4">
                                 {{> afQuickField name="rates.USD"}}
+                            </div>
+                            <div class="col-md-4">
                                 {{> afQuickField name="rates.THB"}}
                             </div>
                         </div>

@@ -9,17 +9,17 @@ export const displaySuccess = (msg = null, i18n = false) => {
         msg = TAPi18n.__('alert.success');
     }
 
-    // sAlert.success(msg);
-    swal({
-        title: "Success",
-        text: msg,
-        type: "success",
-        allowEscapeKey: false,
-        showCloseButton: true,
-        showConfirmButton: false,
-        allowOutsideClick: true,
-        timer: 2000
-    }).done();
+    sAlert.success(msg);
+    // swal({
+    //     title: "Success",
+    //     text: msg,
+    //     type: "success",
+    //     allowEscapeKey: false,
+    //     showCloseButton: true,
+    //     showConfirmButton: false,
+    //     allowOutsideClick: true,
+    //     timer: 3000
+    // }).done();
 };
 
 export const displayError = (msg = null, i18n = false) => {
@@ -38,66 +38,6 @@ export const displayError = (msg = null, i18n = false) => {
         showCloseButton: true,
         showConfirmButton: false,
         allowOutsideClick: true,
-        timer: 2000
-    }).done();
-};
-
-export const displayWarning = (msg = null, i18n = false) => {
-    if (msg) {
-        msg = i18n == true ? TAPi18n.__(msg) : msg;
-    } else {
-        msg = TAPi18n.__('alert.waring');
-    }
-
-    // sAlert.error(msg);
-    swal({
-        title: "Warning",
-        text: msg,
-        type: "warning",
-        allowEscapeKey: false,
-        showCloseButton: true,
-        showConfirmButton: false,
-        allowOutsideClick: true,
-        timer: 2000
-    }).done();
-};
-
-export const displayInfo = (msg = null, i18n = false) => {
-    if (msg) {
-        msg = i18n == true ? TAPi18n.__(msg) : msg;
-    } else {
-        msg = TAPi18n.__('alert.info');
-    }
-
-    // sAlert.error(msg);
-    swal({
-        title: "Info",
-        text: msg,
-        type: "info",
-        allowEscapeKey: false,
-        showCloseButton: true,
-        showConfirmButton: false,
-        allowOutsideClick: true,
-        timer: 2000
-    }).done();
-};
-
-export const displayQuestion = (msg = null, i18n = false) => {
-    if (msg) {
-        msg = i18n == true ? TAPi18n.__(msg) : msg;
-    } else {
-        msg = TAPi18n.__('alert.question');
-    }
-
-    // sAlert.error(msg);
-    swal({
-        title: "Question",
-        text: msg,
-        type: "question",
-        allowEscapeKey: false,
-        showCloseButton: true,
-        showConfirmButton: false,
-        allowOutsideClick: true,
-        timer: 2000
+        timer: 3000
     }).done();
 };

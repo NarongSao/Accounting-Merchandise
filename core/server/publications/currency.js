@@ -6,7 +6,7 @@ import {Currency} from '../../imports/api/collections/currency.js';
 
 Meteor.publish('core.currency', function coreCurrency() {
     this.unblock();
-
+    
     if (this.userId) {
         let data = Currency.find();
 

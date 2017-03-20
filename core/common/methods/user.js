@@ -55,8 +55,8 @@ export const insertUser = new ValidatedMethod({
             _.each(doc.roles, function (element) {
                 let roleWords = _.words(element, /[^:]+/g);
                 Roles.addUsersToRoles(userId,
-                    roleWords[1], // roles
-                    roleWords[0]); // [group]
+                    roleWords[1],
+                    roleWords[0]);
             });
         }
     }
@@ -99,8 +99,8 @@ export const updateUser = new ValidatedMethod({
             _.forEach(doc.roles, function (element) {
                 let roleWords = _.words(element, /[^:]+/g);
                 Roles.addUsersToRoles(_id,
-                    roleWords[1], // roles
-                    roleWords[0]); // [group]
+                    roleWords[1],
+                    roleWords[0]);
             });
         }
     }
