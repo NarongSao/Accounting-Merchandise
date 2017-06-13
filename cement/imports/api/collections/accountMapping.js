@@ -13,14 +13,14 @@ AccountMapping.schema = new SimpleSchema({
             type: "select2",
             placeholder: "Chart Of Account",
             options: function () {
-                return SelectOpts.chartAccount();
+                return SelectOpts.chartAccountIntegrate();
             }
         }
 
     },
-    isUsed:{
-        type:Boolean,
-        label:"Used"
+    isUsed: {
+        type: Boolean,
+        label: "Used"
     }
 });
 Meteor.startup(function () {
