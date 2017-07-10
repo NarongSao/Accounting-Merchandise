@@ -372,7 +372,7 @@ Meteor.methods({
 
         amountList.forEach(function (obj) {
             if (['40', '41'].indexOf(obj.accountTypeId) != -1) {
-                valueAccountListIncome.push({y: -1 * math.round(obj.value, 2), name: obj.code + " | " + obj.name});
+                valueAccountListIncome.push({y: -1 * math.round(obj.value, 3), name: obj.code + " | " + obj.name});
                 accountListIncome.push(obj.code + " | " + obj.name);
             } else if (['50', '51'].indexOf(obj.accountTypeId) != -1) {
                 valueAccountListExpense.push({y: math.round(obj.value), name: obj.code + " | " + obj.name});
