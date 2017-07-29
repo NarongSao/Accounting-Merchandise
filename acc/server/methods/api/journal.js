@@ -56,7 +56,8 @@ Meteor.methods({
 
             return Journal.insert(data);
         } catch (error) {
-            console.log("Accounting Prepare By Narong Sao");
+            console.log("Accounting Prepare By Narong Sao Insert");
+            console.log(error.message);
             throw new Meteor.Error(error.message);
         }
     },
@@ -112,7 +113,8 @@ Meteor.methods({
 
             return Journal.update({refId: data.refId, refFrom: data.refFrom}, {$set: data});
         } catch (error) {
-            console.log("Accounting Prepare By Narong Sao");
+            console.log("Accounting Prepare By Narong Sao Update");
+            console.log(error.message);
             throw new Meteor.Error(error.message);
         }
     },
@@ -121,7 +123,8 @@ Meteor.methods({
         try {
             return Journal.remove({refId: refId, refFrom: refFrom});
         } catch (error) {
-            console.log("Accounting Prepare By Narong Sao");
+            console.log("Accounting Prepare By Narong Sao Remove");
+            console.log(error.message);
             throw new Meteor.Error(error.message);
         }
     }
