@@ -58,6 +58,8 @@ Meteor.methods({
         } catch (error) {
             console.log("Accounting Prepare By Narong Sao Insert");
             console.log(error.message);
+            console.log(data.refFrom + "     " + data.refId);
+            console.log(data.transaction);
             throw new Meteor.Error(error.message);
         }
     },
@@ -115,6 +117,8 @@ Meteor.methods({
         } catch (error) {
             console.log("Accounting Prepare By Narong Sao Update");
             console.log(error.message);
+            console.log(data.refFrom + "     " + data.refId);
+            console.log(data.transaction);
             throw new Meteor.Error(error.message);
         }
     },

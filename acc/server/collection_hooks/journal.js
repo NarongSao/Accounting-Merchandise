@@ -9,8 +9,6 @@ import {ConfigDep} from '../../imports/api/collections/configDep';
 import {ChartAccount} from '../../imports/api/collections/chartAccount';
 import {DepExpList} from '../../imports/api/collections/depExpList';
 import {FixAssetDep} from '../../imports/api/collections/fixAssetDep';
-
-
 Journal.before.insert(function (userId, doc) {
     var depType = ConfigDep.findOne();
     var transaction = [];
